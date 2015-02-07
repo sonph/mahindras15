@@ -103,37 +103,6 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 //   };
 // }]);
 
-app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-  $rootScope.root = {
-    title: 'Student'
-  };
-  
-  $(document).ready(function() {
-    // setup editor
-    var editor_left = ace.edit("left");
-    editor_left.setTheme("ace/theme/xcode");
-    editor_left.getSession().setMode("ace/mode/javascript");
-    editor_left.setFontSize(13);
-    editor_left.$blockScrolling = Infinity;
-
-    // setup kandy
-    setup();
-    $('#loginBtn').on('click', login);
-    $('#logout').on('click', logout);
-    $('#callBtn').on('click', makeCall);
-    $('#answerVideoCallBtn').on('click', answerVideoCall);
-    $('#rejectCallBtn').on('click', rejectCall);
-    $('#hangUpCallOutBtn').on('click', hangUpCall);
-    $('#holdBtn').on('click', holdCall);
-    $('#unholdBtn').on('click', unholdCall);
-    $('#hangUpBtn').on('click', hangUpCall);
-
-    $('#loginForm').on('submit', login);
-    $('#callOutForm').on('submit', makeCall);
-  });
-}]);
-
-
 app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
   $rootScope.root = {
     title: 'Student'
@@ -148,7 +117,9 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     editor_left.$blockScrolling = Infinity;
 
     // setup kandy
+    setLogoutOnUnload();
     setup();
+    login(TEACHER_CALL_USER);
     $('#loginBtn').on('click', login);
     $('#logout').on('click', logout);
     $('#callBtn').on('click', makeCall);
@@ -163,3 +134,38 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#callOutForm').on('submit', makeCall);
   });
 }]);
+
+
+app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+  $rootScope.root = {
+    title: 'Student'
+  };
+  
+  $(document).ready(function() {
+    // setup editor
+    var editor_left = ace.edit("left");
+    editor_left.setTheme("ace/theme/xcode");
+    editor_left.getSession().setMode("ace/mode/javascript");
+    editor_left.setFontSize(13);
+    editor_left.$blockScrolling = Infinity;
+
+    // setup kandy
+    setLogoutOnUnload();
+    setup();
+    login(STUDENT_CALL_USER);
+    $('#loginBtn').on('click', login);
+    $('#logout').on('click', logout);
+    $('#callBtn').on('click', makeCall);
+    $('#answerVideoCallBtn').on('click', answerVideoCall);
+    $('#rejectCallBtn').on('click', rejectCall);
+    $('#hangUpCallOutBtn').on('click', hangUpCall);
+    $('#holdBtn').on('click', holdCall);
+    $('#unholdBtn').on('click', unholdCall);
+    $('#hangUpBtn').on('click', hangUpCall);
+
+    $('#loginForm').on('submit', login);
+    $('#callOutForm').on('submit', makeCall);
+  });
+}]);
+
+

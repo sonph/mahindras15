@@ -40,7 +40,7 @@ var setupAudio = function() {
 };
 
 // called when page is done loading to initialize KandyAPI
-var setup = function() {
+var setup = function(callback) {
     setupAudio();
 
     try {
@@ -150,14 +150,20 @@ var setup = function() {
                 }
             });
         }
+        if (typeof(callback) == "function") {
+            callback();
+        }
     } catch (err) {
         alert("Error initializing KandyAPI.Phone:" + err.message + "\n"+err.stack);
     }
 };
 
-var login = function() {
+var login = function(id, callback) {
     try {
-      KandyAPI.Phone.login(APIKEY, $("#loginId").val(), PASSWORD);
+      KandyAPI.Phone.login(APIKEY, id, PASSWORD);
+      if (typeof(callback) == "function") {
+        callback();
+      }
     } catch(err) {
       alert("Error in login(): " + err.message);
     }
@@ -270,18 +276,20 @@ var changeUIState = function(state) {
     }
 }
 
-$(window).bind('beforeunload', function(e) {
-    console.debug('leaving page');
-    try {
-        if (isOnCall()) {
-            KandyAPI.Phone.endCall(callId);
+var setLogoutOnUnload = function() {
+    $(window).bind('beforeunload', function(e) {
+        console.debug('leaving page');
+        try {
+            if (isOnCall()) {
+                KandyAPI.Phone.endCall(callId);
+            }
+            KandyAPI.Phone.logout(function () {
+            });
+        } catch (err) {
+            //swallow it
         }
-        KandyAPI.Phone.logout(function () {
-        });
-    } catch (err) {
-        //swallow it
-    }
-    var message = null;
-    e.returnValue = null;
-    return message;
-});
+        var message = null;
+        e.returnValue = null;
+        return message;
+    });
+}
