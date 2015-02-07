@@ -246,9 +246,9 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 
   var login = function() {
       try {
-          KandyAPI.Phone.login('DAKe20a56c25eb74349beab5a0bfff9fad6', $("#loginId").val(), '123456a@');
+        KandyAPI.Phone.login(APIKEY, $("#loginId").val(), PASSWORD);
       } catch(err) {
-          alert("Error in login(): " + err.message);
+        alert("Error in login(): " + err.message);
       }
   };
 
@@ -359,21 +359,21 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
       }
   }
 
-  // $(window).bind('beforeunload', function(e) {
-  //     console.debug('leaving page');
-  //     try {
-  //         if (isOnCall()) {
-  //             KandyAPI.Phone.endCall(callId);
-  //         }
-  //         KandyAPI.Phone.logout(function () {
-  //         });
-  //     } catch (err) {
-  //         //swallow it
-  //     }
-  //     var message = null;
-  //     e.returnValue = null;
-  //     return message;
-  // });
+  $(window).bind('beforeunload', function(e) {
+      console.debug('leaving page');
+      try {
+          if (isOnCall()) {
+              KandyAPI.Phone.endCall(callId);
+          }
+          KandyAPI.Phone.logout(function () {
+          });
+      } catch (err) {
+          //swallow it
+      }
+      var message = null;
+      e.returnValue = null;
+      return message;
+  });
 
 
 
