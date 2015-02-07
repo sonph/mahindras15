@@ -106,7 +106,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
           {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.ogg', type: 'audio/ogg'}
       ];
 
-      var audio = {
+      audio = {
           ringIn: $('<audio/>', {loop: 'loop', id: 'ringInAudio'})[0],
           ringOut: $('<audio/>', {loop: 'loop', id: 'ringOutAudio'})[0],
           msgIn: $('<audio/>', {id: 'msgInAudio'})[0]
@@ -388,6 +388,13 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
     setup();
     $('#loginBtn').on('click', login);
     $('#logout').on('click', logout);
+    $('#callBtn').on('click', makeCall);
+    $('#answerVideoCallBtn').on('click', answerVideoCall);
+    $('#rejectCallBtn').on('click', rejectCall);
+    $('#hangUpCallOutBtn').on('click', hangUpCall);
+    $('#holdBtn').on('click', holdCall);
+    $('#unholdBtn').on('click', unholdCall);
+    $('#hangUpBtn').on('click', hangUpCall);
   });
 
 }]);
