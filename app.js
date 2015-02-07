@@ -7,10 +7,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     templateUrl: 'home.html',
     controller: 'HomeCtrl'
   })
-  .when('/about', {
-    templateUrl: 'about.html',
-    controller: 'AboutCtrl'
-  })
+  // .when('/about', {
+  //   templateUrl: 'about.html',
+  //   controller: 'AboutCtrl'
+  // })
   .otherwise({
     templateUrl: 'home.html',
     controller: 'HomeCtrl'
@@ -87,271 +87,306 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
   });
 
   $(document).ready(function() {
+    // setup editor
     var editor_left = ace.edit("left");
     editor_left.setTheme("ace/theme/xcode");
     editor_left.getSession().setMode("ace/mode/javascript");
     editor_left.setFontSize(13);
     editor_left.$blockScrolling = Infinity;
-
-    var editor_right = ace.edit("right");
-    editor_right.setTheme("ace/theme/xcode");
-    editor_right.getSession().setMode("ace/mode/javascript");
-    editor_right.setReadOnly(true);
-    editor_right.renderer.setShowGutter(false); 
-    editor_right.setHighlightActiveLine(false);
-    editor_right.renderer.$cursorLayer.element.style.opacity = 0;
-    editor_right.textInput.getElement().disabled = true;
-    editor_right.commands.commmandKeyBinding = {};
-    editor_right.setFontSize(13);
-    editor_right.$blockScrolling = Infinity;
-
-    $scope.running = false;
-    $scope.lastRefresh = new Date().getTime();
-    $scope.firstTime = true; // first time on page load?
-    $scope.refreshInterval = 2000;
-    $scope.animationDuration = 300;
-    $scope.domain = 'http://sonpham.me/hackutds15/#/';
-    $scope.autorefresh = true;
-    $scope.defaultContent = '// basic algebra\n\
-// try setting a to an arbitrary value and see the values updated in realtime\n\
-var a = 2;\n\
-var b = 4;\n\
-var c = a * b;\n\
-// you can see how variables values change as the program runs, from top to bottom\n\
-c = a + b;\n\
-c ++;\n\
-c -= ((a % b) * a / b) + 12;\n\
-\n\
-// find sum of a list\n\
-var l = [22, 3, 5, 10, 12];\n\
-var s = 0;\n\
-for (var index = 0; index < l.length; index++) {\n\
-  s = s + l[index];\n\
-}\n\
-s = 0;\n\
-\n\
-index = -1;\n\
-do {\n\
-  index ++;\n\
-  s += l[index];\n\
-} while (index < l.length);\n\
-\n\
-s = 0;\n\
-index = 0;\n\
-do {\n\
-  s += l[index];\n\
-  index ++; \n\
-} while (index < l.length);\n\
-\n\
-// function call\n\
-var st = "hello world";\n\
-st.slice(2, 6); // this doesn\'t change st\n\
-\n\
-// list methods\n\
-var fruits = ["Banana", "Orange", "Apple", "Mango", "Pine Apple"];\n\
-fruits.shift();\n\
-fruits.sort();\n\
-\n\
-    ';
-
-    // get Parse data
-    Parse.initialize("uY92Wyjl4MhYl4i9wBptpFIDqYSAh4A9wjSRLe29", "4D0HZli6Yw7u4gEdpV1XHpBoWhPWEiQVmzZ23gWV");
-    // var TestObject = Parse.Object.extend("TestObject");
-    // var testObject = new TestObject();
-    // testObject.save({foo: "bar"}).then(function(object) {
-    //   alert("yay! it worked");
-    // });
-
-    var parseSave = function() {
-      console.log('parseSave called');
-      var CodeObject = Parse.Object.extend("CodeObject");
-      var codeObj = new CodeObject();
-      // codeObj.set(code, R.join('\n', editor_left.session.getDocument().getAllLines()));
-      console.log("content", R.join('\n', editor_left.session.getDocument().getAllLines()));
-      codeObj.save({
-        content: R.join('\n', editor_left.session.getDocument().getAllLines())
-      }, 
-      {
-        success: function(obj) {
-          console.log("parse success");
-          // toast('New object created with objectId: ' + obj.id, 3000);
-          window.prompt("Your link:", $scope.domain + obj.id);
-        }, 
-        error: function(obj, error) {
-          console.log("parse error");
-          toast('Failed to save: ' + error.message, 5000);
-        }
-      });
-    };
-
-    var parseLoad = function(id) {
-      console.log("LOADDING", id);
-      var CodeObject = Parse.Object.extend("CodeObject");
-      var query = new Parse.Query(CodeObject);
-      query.get(id, {
-        success: function(obj) {
-          toast('Loaded');
-          console.log('LOADED CONTENT', obj.attributes.content);
-          editor_left.setValue(obj.attributes.content);
-          editor_left.selection.clearSelection();
-          editor_left.gotoLine(0, 0, false);
-        },
-        error: function(obj, error) {
-          toast('Failed to load: ' + error.message, 5000); 
-          editor_left.setValue($scope.defaultContent);
-          editor_left.selection.clearSelection();
-          editor_left.gotoLine(0, 0, false);
-        }
-      });
-    };
-
-    $('#savebtn').click(function() {
-      console.log('#savebtn clicked');
-      parseSave();
-    });
-
-    var load = function(id) {
-      $scope.running = true;
-      $('#refreshbtn').addClass('disabled');
-      $('#right').fadeOut('fast');
-      $('#right').hide();
-      $('#preloader_td').addClass("center");
-      $('#preloader').fadeIn('fast');
-
-      // call function
-      setTimeout(function() {
-        parseLoad(id);
-        $('#preloader').fadeOut('fast');
-        $('#preloader').hide();
-        $('#preloader_td').removeClass("center");
-        $('#right').fadeIn('fast');
-        $('#refreshbtn').removeClass('disabled');
-        $scope.running = false;
-      }, $scope.animationDuration);
-    };
-
-    console.log("PATH:", $location.path());
-    var path = $location.path().trim();
-    if (path != '/') {
-      if (path.charAt(0) == '/') {
-        $scope.contentid = path.substr(1);
-      } else {
-        $scope.contentid = path;
-      }
-      load($scope.contentid);
-    } else {
-      editor_left.setValue($scope.defaultContent);
-      editor_left.selection.clearSelection();
-      editor_left.gotoLine(0, 0, false);
-    }
-
-    // preloader animation
-    // $('#right').hide();
-    $('#preloader').hide();
-
-    // set refresh rate to max one refresh per $scope.refreshInterval
-    var interval = function() {
-      var now = new Date().getTime();
-      if (((now - $scope.lastRefresh) < $scope.refreshInterval) && !$scope.firstTime) {
-        setTimeout(refresh, $scope.refreshInterval - (now - $scope.lastRefresh));
-      }
-
-      $scope.firstTime = false;
-
-      $scope.lastRefresh = now;
-      refresh();
-    };
-
-
-    // wait for user to finish typing
-    var timer = 0;
-    var onKeydown = function(e) {
-      if($scope.autorefresh) {
-        $scope.running = true;
-        $('#refreshbtn').addClass('disabled');
-        $('#right').fadeOut('fast');
-        $('#right').hide();
-        $('#preloader_td').addClass("center");
-        $('#preloader').fadeIn('fast');
-      }
-    };
-    $('#left').on('keydown', onKeydown);
-    var onKeyup =  function(e){
-      if ($scope.firstTime) {
-        refresh();
-        $scope.firstTime = false;
-      } else {
-        if($scope.autorefresh) {
-          if (timer) {
-            clearTimeout(timer);
-          }
-          timer = setTimeout(function() {
-            debug(editor_left, editor_right);
-            $('#preloader').fadeOut('fast');
-            $('#preloader').hide();
-            $('#preloader_td').removeClass("center");
-            $('#right').fadeIn('fast');
-            $('#refreshbtn').removeClass('disabled');
-            $scope.running = false;
-          }, 500);
-        } else {
-          clearTimeout(timer);
-        }
-      }
-    };
-    $('#left').on('keyup', onKeyup);
-
-
-
-    // refresh function and animation
-    var refresh = function() {
-      $scope.running = true;
-      $('#refreshbtn').addClass('disabled');
-      $('#right').fadeOut('fast');
-      $('#right').hide();
-      $('#preloader_td').addClass("center");
-      $('#preloader').fadeIn('fast');
-
-      // call function
-      setTimeout(function() {
-        debug(editor_left, editor_right);
-        $('#preloader').fadeOut('fast');
-        $('#preloader').hide();
-        $('#preloader_td').removeClass("center");
-        $('#right').fadeIn('fast');
-        $('#refreshbtn').removeClass('disabled');
-        $scope.running = false;
-      }, $scope.animationDuration);
-    };
-
-    // refresh button and refresh on change
-    $('#refreshbtn').on('click', refresh);
-    // editor_left.on('change', interval);
-
-    // auto refresh checkbox
-    $('#autorefresh').click(function() {
-      if ($(this).is(':checked')) {
-        $scope.autorefresh = true;
-        editor_left.on('change', refresh);
-      } else {
-        $scope.autorefresh = false;
-        editor_left.removeListener('change', refresh);
-      }
-    });
-
-    // radio buttons
-    $('input[name=group1]').on('click', function() {
-      var id = $(this).prop('id');
-      console.log(id);
-      if (id == 'fancy') {
-        $scope.animationDuration = 50000;
-      } else {
-        $scope.animationDuration = 0;
-      }
-    });
-
-    refresh(); // first time on page load
   });
+
+  // setup kandy
+  var uiState = '';
+  var callId = null;
+  var audio = null;
+
+  var setupAudio = function() {
+      var ringInAudioSrcs = [
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.mp3', type: 'audio/mp3'},
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.ogg', type: 'audio/ogg'}
+      ];
+      var ringOutAudioSrcs = [
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.mp3', type: 'audio/mp3'},
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.ogg', type: 'audio/ogg'}
+      ];
+      var msgInAudioSrcs = [
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.mp3', type: 'audio/mp3'},
+          {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.ogg', type: 'audio/ogg'}
+      ];
+
+      var audio = {
+          ringIn: $('<audio/>', {loop: 'loop', id: 'ringInAudio'})[0],
+          ringOut: $('<audio/>', {loop: 'loop', id: 'ringOutAudio'})[0],
+          msgIn: $('<audio/>', {id: 'msgInAudio'})[0]
+      };
+
+      // setup Msg sources
+      for (var i = 0; i < msgInAudioSrcs.length; i++) {
+          audio.msgIn.appendChild($('<source/>', msgInAudioSrcs[i])[0]);
+      }
+
+      // setup RingIn sources
+      for (var i = 0; i < ringInAudioSrcs.length; i++) {
+          audio.ringIn.appendChild($('<source/>', ringInAudioSrcs[i])[0]);
+      }
+
+      // setup RingOut sources
+      for (var i = 0; i < ringOutAudioSrcs.length; i++) {
+          audio.ringOut.appendChild($('<source/>', ringOutAudioSrcs[i])[0]);
+      }
+  };
+
+  // called when page is done loading to initialize KandyAPI
+  var setup = function() {
+      setupAudio();
+
+      try {
+          if (KandyAPI === undefined) {
+              alert("KandyAPI object undefined (not finding kandy.js)");
+          } else if (fcs === undefined) {
+              alert("fcs object undefined (not finding fcs.js)");
+          } else {
+              changeUIState('LOGGED_OUT');
+
+              KandyAPI.Phone.setup({
+                  remoteVideoContainer: $('#videoPane')[0],
+                  // respond to Kandy events...
+                  listeners: {
+                      loginsuccess: function () {
+                          console.debug('loginsuccess');
+                          KandyAPI.Phone.updatePresence(0);
+                          changeUIState('READY_FOR_CALLING');
+                      },
+                      loginfailed: function () {
+                          console.debug('loginfailed');
+                          alert("Login failed");
+                      },
+                      // you successfully initiated a call (waiting for callee to answer)
+                      callinitiated: function (call, number) {
+                          console.debug('callinitiated');
+                          audio.ringOut.play();
+                          callId = call.getId();
+                          $('#otherPartyName').val($('#callOutId').val());
+                          changeUIState('CALLING');
+                      },
+                      callinitiatefailed: function(message) {
+                          console.debug('callinitiatefailed');
+                          audio.ringOut.pause();
+                          if (message !== undefined && message.length > 0) {
+                              alert(message);
+                          }
+                          $('#statusMsg').html("Call initiation failed.");
+                          changeUIState("READY_FOR_CALLING");
+                      },
+                      // your call was declined by callee
+                      callrejected: function () {
+                          console.debug('callrejected');
+                          audio.ringIn.pause();
+                          changeUIState("READY_FOR_CALLING");
+                          $('#statusMsg').html("Call declined.");
+                      },
+                      callrejectfailed: function() {
+                          console.debug('callrejectfailed')
+                          $('#statusMsg').html("Call decline failed.");
+                      },
+                      callignored: function() {
+                          console.debug('callignored');
+                          audio.ringIn.pause();
+                          changeUIState("READY_FOR_CALLING");
+                          $('#statusMsg').html("Call declined.");
+                      },
+                      callignorefailed: function() {
+                          console.debug('callignorefailed');
+                      },
+                      // you are being called, time to answer or reject
+                      callincoming: function (call, isAnonymous) {
+                          console.debug('callincoming');
+                          audio.ringIn.play();
+                          callId = call.getId();
+                          if (!isAnonymous) {
+                              $('#otherPartyName').val(call.callerName);
+                          } else {
+                              $('#otherPartyName').val('anonymous');
+                          }
+                          changeUIState('BEING_CALLED');
+                      },
+                      // you indicated that you are answering the call
+                      callanswered: function (call) {
+                          console.debug('callanswered');
+                          audio.ringIn.pause();
+                          changeUIState("ON_CALL");
+                      },
+                      callanswerfailed: function (call) {
+                          console.debug('callanswerfailed');
+                      },
+                      // you are connected to other party (either they called you or you called them),
+                      oncall: function (call) {
+                          console.debug('oncall');
+                          audio.ringOut.pause();
+                          changeUIState("ON_CALL");
+                      },
+                      // call connection ended
+                      callended: function (call) {
+                          console.debug('callended');
+                          audio.ringOut.pause();
+                          audio.ringIn.pause();
+
+                          callId = null;
+                          if (uiState != 'LOGGED_OUT') {
+                              changeUIState("READY_FOR_CALLING");
+                              $('#statusMsg').html("Call ended.");
+                          }
+                      },
+                      callendfailed: function () {
+                          console.debug('callendfailed');
+                      },
+                      // presense notifications (are your contacts available, away, offline?) not handled in this demo
+                      presencenotification: function (username, state, description, activity) {
+                          console.debug('presencenotification');
+                      }
+                  }
+              });
+          }
+      } catch (err) {
+          alert("Error initializing KandyAPI.Phone:" + err.message + "\n"+err.stack);
+      }
+  };
+
+  var login = function() {
+      try {
+          KandyAPI.Phone.login($("#domainApiId").val(), $("#loginId").val(), $('#passwd').val());
+      } catch(err) {
+          alert("Error in login(): " + err.message);
+      }
+  };
+
+  var makeCall = function() {
+      KandyAPI.Phone.makeCall($('#callOutId').val(), true);
+  };
+  var answerVideoCall = function() {
+      changeUIState("ANSWERING_CALL");
+      KandyAPI.Phone.answerCall(callId, true);
+  };
+  var rejectCall = function() {
+      KandyAPI.Phone.rejectCall(callId);
+  };
+  var holdCall = function() {
+      KandyAPI.Phone.holdCall(callId);
+      changeUIState('CALL_HELD');
+  };
+  var unholdCall = function() {
+      KandyAPI.Phone.unHoldCall(callId);
+      changeUIState('ON_CALL')
+  };
+  var hangUpCall = function() {
+      KandyAPI.Phone.endCall(callId);
+  };
+
+  var isOnCall = function() {
+      return (uiState == 'ON_CALL' || uiState == 'BEING_CALLED' || uiState == 'CALLING' || uiState == 'CALL_HELD');
+  };
+
+  var logout = function() {
+      try {
+          if (isOnCall()) {
+              if (confirm("End call and log out?")) {
+                  KandyAPI.Phone.endCall(callId);
+                  KandyAPI.Phone.logout(function () {
+                      changeUIState('LOGGED_OUT');
+                  });
+              }
+          } else {
+              KandyAPI.Phone.logout(function () {
+                  changeUIState('LOGGED_OUT');
+              });
+          }
+      } catch (err) {
+          alert("Error in logout(): "+err.message)
+      }
+  };
+
+  var changeUIState = function(state) {
+      uiState = state;
+      switch (uiState) {
+          case 'LOGGED_OUT':
+              $("#login").show();
+              $("#logout").css('visibility','hidden');
+              $("#someonesCalling").hide();
+              $('#readyForCalling').hide();
+              $('#onCall').hide();
+              $("#statusMsg").html('');
+              $('#videoPane').hide();
+              break;
+          case 'READY_FOR_CALLING':
+              $("#login").hide();  //hide();
+              $("#logout").css('visibility','visible');
+              $('#someonesCalling').hide();
+              $('#readyForCalling').show();
+              $('#callingOut').hide();
+              $('#onCall').hide();
+              $('#statusMsg').html("");
+              $('#videoPane').empty();
+              $('#videoPane').show();
+              break;
+          case 'CALLING':
+              $('#someonesCalling').hide();
+              $('#readyForCalling').hide();
+              $('#callingOut').show();
+              $('#onCall').hide();
+              $('#statusMsg').html("Calling " + $('#callOutId').val());
+              break;
+          case 'ON_CALL':
+              $('#someonesCalling').hide();
+              $('#readyForCalling').hide();
+              $('#callingOut').hide();
+              $('#onCall').show();
+                  $('#holdBtn').css('display', 'inline');
+                  $('#unholdBtn').hide();
+              $('#statusMsg').html("Connected to " + $('#otherPartyName').val());
+              break;
+          case 'BEING_CALLED':
+              $('#someonesCalling').show();
+              $('#readyForCalling').hide();
+              $('#callingOut').hide();
+              $('#onCall').hide();
+              $('#statusMsg').html("Incoming call from " + $('#otherPartyName').val() + "...");
+              break;
+          case 'ANSWERING_CALL':
+              $('#someonesCalling').hide();
+              $('#statusMsg').html("Establishing connection with " + $('#otherPartyName').val() + "...");
+              break;
+          case 'CALL_HELD':
+              $('#someonesCalling').hide();
+              $('#readyForCalling').hide();
+              $('#callingOut').hide();
+              $('#onCall').show();
+                  $('#holdBtn').hide();
+                  $('#unholdBtn').css('display', 'inline');
+              $('#statusMsg').html("On hold with " + $('#otherPartyName').val() + "...");
+              break;
+      }
+  }
+
+  $(window).bind('beforeunload', function(e) {
+      console.debug('leaving page');
+      try {
+          if (isOnCall()) {
+              KandyAPI.Phone.endCall(callId);
+          }
+          KandyAPI.Phone.logout(function () {
+          });
+      } catch (err) {
+          //swallow it
+      }
+      var message = null;
+      e.returnValue = null;
+      return message;
+  });
+
+  setup();
+
+
+
 }]);
 
 

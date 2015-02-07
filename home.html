@@ -1,6 +1,74 @@
 <div class="section row container" id="intro">
+  <div id="left"></div>
 </div>
 
 <div class="section row container">
-  <div id="left" class="">
+    <div id='call_control'>
+        <div id="mainControl">
+            <!-- user is logged in and may log out -->
+            <div id="logout" onclick="logout()">Log out</div>
+
+            <!-- title -->
+            <div id="myTitle">Kandy Phone</div>
+
+            <!------------------------------------------------------------------>
+            <!-- This DIV will hold the <VIDEO> element when it is given      -->
+            <!-- via callback from the KandyAPI (when connected to other      -->
+            <!-- user).  See comments in the remotevideoinitialized callback. -->
+            <!------------------------------------------------------------------>
+            <div id="videoPane">
+
+            </div>
+
+            <!-- login form -->
+            <div id="login" style="display:none">
+                <form id="loginForm" onsubmit="alert('This form should not be submitted!');">
+                    Project API Key: <input id="domainApiId" type="text" style="width:235px" value=""/><br/>
+                    <label for="loginId">Username: </label>
+                    <input id="loginId" type="text" style="width:200px;" value="" placeholder="username (e.g. user1)"/>
+                    <br/><br/>
+                    <label for="passwd">Password: </label>
+                    <input id="passwd" type="password" style="width:200px" value=""/>
+                    <br/><br/>
+                    <input id="loginBtn" type="button" value="Log in" onclick="login();return false;"/>
+                </form>
+            </div>
+
+            <!-- user is logged in, but not on call -->
+            <div id="readyForCalling" style="display:none">
+                <form name="callOutForm" onsubmit="alert('this form should never submit');">
+                    <label for="callOutId">User to Call: </label>
+                    <input id="callOutId" type="text" style="width:170px" value="" placeholder="username@domain.com"/>
+                    &nbsp;
+                    <input id="callBtn" type="submit" value="Call" onclick="makeCall(this);return false;" style="width:52px;"/>
+                </form>
+            </div>
+
+            <!-- receiving a call, but haven't answered yet -->
+            <div id="someonesCalling" style="display:none">
+                <label for="callOutId">Incoming Call</label>
+                &nbsp;
+                <input id="answerVideoCallBtn" type="button" value="Answer" onclick="answerVideoCall()" style="width:90px;height:23px;"/>
+                <input id="rejectCallBtn" type="button" value="Decline" onclick="rejectCall()" style="width:90px;height:23px;"/>
+                <input id="otherPartyName" type="hidden" />
+            </div>
+
+            <!-- initiated call, waiting for it to be answered -->
+            <div id="callingOut" style="display:none">
+                <input id="hangUpCallOutBtn" type="button" value="End Call" onclick="hangUpCall()" style="width:90px;height:23px;"/>
+            </div>
+
+            <!-- user is on an active call -->
+            <div id="onCall" style="display:none">
+                <input id="holdBtn" type="button" value="Hold" onclick="holdCall()" style="width:90px;height:23px;"/>
+                <input id="unholdBtn" type="button" value="Unhold" onclick="unholdCall()" style="width:90px;height:23px;"/>
+                <input id="hangUpBtn" type="button" value="End Call" onclick="hangUpCall()" style="width:90px;height:23px;"/>
+            </div>
+            <br/>
+        </div>
+
+        <div id="status" style="text-align:center;width:100%">
+            <span class="statusLabel"></span><span id="statusMsg"></span>
+        </div>
+    </div>
 </div>

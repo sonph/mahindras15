@@ -65,3 +65,16 @@
 #intro p {
   font-size: 1.2em;
 }
+
+
+body {padding:0, margin:0}
+        #login {border:1px solid black;width:334px;height:250px;text-align:center;vertical-align:middle;display:table-cell}
+        #loginForm {width:260px;margin:0 auto;display:inline-block}
+        #logout {color:#5A0F7D; text-decoration: underline; width:100%;text-align:right;text-size:1em;margin-right:10px;visibility:hidden}
+        #myTitle {color:#5A0F7D; font-size:1.5em;width:100%;text-align:center}
+        #call_control {position:relative;border:5px solid #5A0F7D;background-color:white;color:black;width:340px;height:335px;padding:5px 10px 10px 10px}
+        #mainControl {width:339px;height:210px;}
+        #videoPane {border:1px solid black;width:334px;height:250px;background-image:url("/images/kandy/GenbandPresentsKandy.png");background-repeat:no-repeat;background-size: 334px 250px}
+        #onCall{text-align:center;}
+        #status  {position: absolute; bottom: 0; left: 0;}
+        #callOutId {width: 160px}
