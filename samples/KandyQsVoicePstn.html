@@ -1,0 +1,190 @@
+<html>
+<head>
+    <title>Make a PSTN Call</title>
+
+    <!-- All three files required for Kandy  -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.1/fcs.js"></script>
+    <script src="https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.1.0/kandy.js"></script>
+
+    <script language = "JavaScript">
+        var callId = null;
+        var audio = null;
+
+        setupAudio = function() {
+            ringInAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.ogg', type: 'audio/ogg'}
+            ];
+            ringOutAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.ogg', type: 'audio/ogg'}
+            ];
+            msgInAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.ogg', type: 'audio/ogg'}
+            ];
+
+            audio = {
+                ringIn: $('<audio/>', {loop: 'loop', id: 'ringInAudio'})[0],
+                ringOut: $('<audio/>', {loop: 'loop', id: 'ringOutAudio'})[0],
+                msgIn: $('<audio/>', {id: 'msgInAudio'})[0]
+            };
+
+            // setup Msg sources
+            for (var i = 0; i < msgInAudioSrcs.length; i++) {
+                audio.msgIn.appendChild($('<source/>', msgInAudioSrcs[i])[0]);
+            }
+
+            // setup RingIn sources
+            for (var i = 0; i < ringInAudioSrcs.length; i++) {
+                audio.ringIn.appendChild($('<source/>', ringInAudioSrcs[i])[0]);
+            }
+
+            // setup RingOut sources
+            for (var i = 0; i < ringOutAudioSrcs.length; i++) {
+                audio.ringOut.appendChild($('<source/>', ringOutAudioSrcs[i])[0]);
+            }
+        };
+
+        // this is called when page is done loading to set up (initialize) the KandyAPI.Phone
+        setup = function() {
+            setupAudio();
+
+            // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
+            KandyAPI.Phone.setup({
+                remoteVideoContainer: $('#theirVideo')[0],
+
+                // respond to Kandy events...
+                listeners: {
+                    loginsuccess: function () {
+                        KandyAPI.Phone.updatePresence(0);
+                        changeUIState('READY_FOR_CALLING');
+                    },
+                    loginfailed: function () {
+                        alert("Login failed");
+                    },
+                    callinitiated: function(call) {
+                        audio.ringOut.play();
+                        callId = call.getId();
+                    },
+                    callinitiatefailed: function(call) {
+                        audio.ringOut.pause();
+                        callId = null;
+                        changeUIState('READY_FOR_CALLING');
+                        alert("Call failed to start");
+                    },
+                    oncall: function (call) {
+                        audio.ringOut.pause();
+                        changeUIState("ON_CALL");
+                    },
+                    callended: function(call) {
+                        audio.ringOut.pause();
+                        callId = null;
+                        changeUIState('READY_FOR_CALLING');
+                    }
+                }
+            });
+        };
+
+        login = function() {
+            KandyAPI.Phone.login($("#domainApiId").val(), $("#loginId").val(), $('#passwd').val());
+        };
+
+        logout = function() {
+            if (callId) {
+                endCall();
+            }
+            KandyAPI.Phone.logout(function () {
+                changeUIState('LOGGED_OUT');
+            });
+        };
+
+        makeCall = function() {
+            KandyAPI.Phone.makePSTNCall($('#callOutUserId').val(), $('#callerId').val());
+            changeUIState('CALLING');
+        };
+
+        sendTones = function() {
+            KandyAPI.Phone.sendDTMF(callId,  $('#tones').val());
+        };
+
+        endCall = function() {
+            KandyAPI.Phone.endCall(callId);
+            changeUIState('READY_FOR_CALLING');
+        };
+
+        changeUIState = function(state) {
+            switch (state) {
+                case 'LOGGED_OUT':
+                    $("#loginForm").show();
+                    $("#logOut").hide();
+                    $("#callOut").hide();
+                    $("#calling").hide();
+                    $('#onCall').hide();
+                    break;
+                case 'READY_FOR_CALLING':
+                    $("#loginForm").hide();
+                    $("#logOut").show();
+                    $('#callOut').show();
+                    $('#calling').hide();
+                    $('#onCall').hide();
+                    $('#currentUser').text($('#loginId').val());
+                    break;
+                case 'CALLING':
+                    $("#loginForm").hide();
+                    $("#logOut").hide();
+                    $('#callOut').hide();
+                    $('#calling').show();
+                    $('#onCall').hide();
+                    break;
+                case 'ON_CALL':
+                    $("#loginForm").hide();
+                    $("#logOut").hide();
+                    $('#callOut').hide();
+                    $('#calling').hide();
+                    $('#onCall').show();
+                    break;
+            }
+        }
+    </script>
+
+</head>
+
+<body onload="setup();" style="width:500px;">
+<h2>Quick Start Sample App: Make a PSTN Call</h2>
+This sample application demonstrates the code for initiating a voice call with Kandy.
+<br/><hr><br/>
+<form id="loginForm">
+    Project API Key: <input id="domainApiId" type="text" style="width:200px;margin-bottom:1px;" value=""/><br/>
+    Username: <input id="loginId" type="text" style="width:200px;margin:0 0 1px 64px;" value=""  placeholder="username (e.g. user1)"/><br/>
+    Password: <input id="passwd" type="password" style="width:200px;margin-left:41px;" value=""/><br/>
+    <input id="loginBtn" type="button" value="Log in" onclick="login();return false;" style="width:90px;height:23px;margin:5px 0 0 110px;"/>
+</form>
+<br />
+<div id="logOut" style="display:none">
+    Hello <span id="currentUser"></span> <input type="button" value="Log Out" onclick="logout()" style="width:90px;height:23px;"/>
+</div>
+<div id="callOut" style="display:none" >
+    <br/>User to call:
+    <input id="callOutUserId" type="text" value="" placeholder="e.g. 14075550100"/> &nbsp;
+    <input id="callBtn" type="button" value="Call" onclick="makeCall()" style="width:90px;height:23px;"/><br/>
+    Caller ID: <input id="callerId" type="text" value="" placeholder="how you want to appear" style="width: 145px"/> &nbsp;
+</div>
+<div id="calling" style="display:none">
+    Calling...
+    <input type="button" value="End Call" onclick="endCall()" style="width:90px;height:23px;"/>
+</div>
+<div id="onCall" style="display:none">
+    You're connected!<br/><br/>
+
+    Tones to Send:
+    <input id="tones" type="text" value="" placeholder="e.g. 1 or 1# or 332*2#"/> &nbsp;
+    <input id="sendTonesBtn" type="button" value="Send" onclick="sendTones()" style="width:90px;height:23px;"/><br/>
+    <br/>
+    <input type="button" value="End Call" onclick="endCall()" style="width:90px;height:23px;"/>
+
+</div>
+<div id="theirVideo" style="display:none;"></div>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<html>
+    <head>
+        <title>Session Participation</title>
+
+        <!-- All three files required for Kandy  -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.1/fcs.js"></script>
+        <script src="/javascripts/kandy/2.1.0/kandy.js"></script>
+        <script language = "JavaScript">
+            // called when page is done loading to set up (initialize) the KandyAPI.Phone
+            var sessions = [];
+            var sessionListeners = [];
+
+            loginUser = function () {
+                KandyAPI.login(
+                        $("#domainApiId").val(),
+                        $("#loginUserName").val(),
+                        $("#loginPassword").val(),
+                        function (results) {
+                            changeUIState('NO_SESSION');
+                            $('#user_id').text(results.full_user_id);
+                            getOpenSessions();
+
+                            // if there are no sessions loaded, keep checking to see if there any
+                            setInterval(function() {
+                                 if (sessions.length < 1) {
+                                     getOpenSessions();
+                                 }
+                            },3000);
+                        },
+                        function (msg, code) {
+                            $('#loginStatus').text("Error loggin in:(" + code + "): " + msg);
+                        }
+                );
+            };
+
+            getOpenSessions = function () {
+                KandyAPI.Session.getOpenSessions(
+                        function (result) {
+                            processSessionList(result.sessions);
+                        },
+                        function (msg, code) {
+                            $('#statusText').text("Error getting session info(" + code + "): " + msg);
+                        }
+                );
+            };
+
+            processSessionList = function (sessionList) {
+                $("#sessions").empty();
+
+                if (sessionList.length > 0) {
+                    sessions = sessionList;
+                    var i = 0;
+                    for (i = 0; i < sessionList.length; ++i) {
+                        $("#sessions").append('<option value="' + i + '">' + sessionList[i].session_id + '</option>');
+                    }
+                    loadSessionDetails();
+                } else {
+                    changeUIState('NO_SESSION');
+                    sessions = [];
+                    clearSessionDetails();
+                }
+            }
+
+            onSessionData = function (message) {
+                $('#statusText').text("Message Received: " + JSON.stringify(message));
+            };
+
+            onSessionUserJoin = function (notification) {
+                $('#statusText').text("User Joined");
+                loadSessionDetails();
+            };
+
+            onSessionJoinApprove = function (notification) {
+                $('#statusText').text("Participation approved");
+                loadSessionDetails();
+            };
+
+            onSessionJoinReject = function (notification) {
+                $('#statusText').text("Participation rejected");
+                loadSessionDetails();
+            };
+
+            onSessionUserLeave = function (notification) {
+                $('#statusText').text("User left");
+                loadSessionDetails();
+            };
+
+            onSessionUserBoot = function (notification) {
+                $('#statusText').text("Session User Boot");
+                loadSessionDetails();
+            };
+
+            onSessionBoot = function (notification) {
+                $('#statusText').text("You have been booted from session");
+                loadSessionDetails();
+            };
+
+            onActive = function (notification) {
+                $('#statusText').text("Session activated");
+                loadSessionDetails();
+            };
+
+            onInactive = function (notification) {
+                $('#statusText').text("Session inactivated");
+                loadSessionDetails();
+            };
+
+            onSessionTermination = function (notification) {
+                $('#statusText').text("Session Terminated");
+
+               // delete entry from sessions array                     
+               var deletedSessionId = notification.session_id,
+                   indexOfSessionToDelete = sessions.map(function(sess){
+                                                         return sess.session_id
+                                                      }).indexOf(deletedSessionId);
+                   if(indexOfSessionToDelete > -1){
+                       sessions.splice(indexOfSessionToDelete, 1);
+                    }
+                 processSessionList(sessions);
+            };
+
+            var listeners = {
+                'onData': onSessionData,
+                'onUserJoin': onSessionUserJoin,
+                'onJoinApprove': onSessionJoinApprove,
+                'onJoinReject': onSessionJoinReject,
+                'onUserLeave': onSessionUserLeave,
+                'onUserBoot': onSessionUserBoot,
+                'onBoot': onSessionBoot,
+                'onActive': onActive,
+                'onInactive': onInactive,
+                'onTermination': onSessionTermination
+            };
+
+            joinSession = function () {
+                KandyAPI.Session.setListeners(sessions[$("#sessions").val()].session_id, listeners);
+                KandyAPI.Session.join(
+                        sessions[$("#sessions").val()].session_id,
+                        {
+                            user_nickname: $("#join_user_nickname").val(),
+                            user_first_name: $("#join_user_first_name").val(),
+                            user_last_name: $("#join_user_last_name").val(),
+                            user_phone_number: $("#join_user_phone_number").val(),
+                            user_email: $("#join_user_email").val()
+                        },
+                function () {
+                    $('#statusText').text("Session Join Requested: " + sessions[$("#sessions").val()].session_id);
+                    loadSessionDetails();
+                },
+                function (msg, code) {
+                    $('#statusText').text("Error joining session (" + code + "): " + msg);
+                }
+                );
+            };
+
+            leaveSession = function () {
+                KandyAPI.Session.leave(
+                        sessions[$("#sessions").val()].session_id,
+                        "Let me outta here",
+                        function () {
+                            changeUIState('SESSION_NONPARTICIPANT');
+                            $('#statusText').text("Session left.  ID = " + sessions[$("#sessions").val()].session_id);
+                            loadSessionDetails();
+                        },
+                        function (msg, code) {
+                            $('#statusText').text("Error leaving session (" + code + "): " + msg);
+                        }
+                );
+            };
+
+            sendData = function () {
+                KandyAPI.Session.sendData(
+                    sessions[$("#sessions").val()].session_id,
+                    $('#session_data').val(),
+                    function() {
+                        $('#statusText').text("Data sent");
+                        $('#session_data').val('');
+                    },
+                    function(msg, code) {
+                        $('#statusText').text("Error sending Data (" + code + "): " + msg);
+                    }
+                );
+            };
+
+           updateSessionDetails = function(sess_id, sessionDetails){
+               var sess = null;
+               //update session detail if session_id matches
+               if(sess_id == sessionDetails.session_id){
+                  // update session details in sessions array
+
+                  var sessionIndex = sessions.map(function(session){
+                                                  return session.session_id;
+                                              }).indexOf(sess_id);
+                  sessions[sessionIndex] = sessionDetails;
+                  sess = sessionDetails;
+
+                  $('#session_type').text(sess.session_type);
+                  $('#session_name').text(sess.session_name);
+                  $('#session_status').text(sess.session_status);
+                  $('#admin_full_user_id').text(sess.admin_full_user_id);
+                  $('#domain_name').text(sess.domain_name);
+
+                  var dt = new Date();
+                  dt.setTime(sess.creation_timestamp);
+                  $('#creation_timestamp').text(dt.toDateString());
+
+                  dt.setTime(sess.expiry_timestamp);
+                  $('#expiry_timestamp').text(dt.toDateString());
+               }
+               return sess;
+           };
+
+            loadSessionDetails = function () {
+                var session_id =  sessions[$("#sessions").val()].session_id;
+                KandyAPI.Session.getInfoById(
+                        session_id,
+                        function (result) {
+                            // update session details for the session id
+                            var sess = updateSessionDetails(session_id, result.session);
+
+                            var i = 0;
+                            var userRole = 'none';
+                            if ($('#user_id').text() === sess.admin_full_user_id) {
+                                userRole = 'admin';
+                            }
+                            var users = result.session.participants;
+                            $('#participantsList li').remove();
+                            if (users.length < 1) {
+
+                            } else {
+                                for (i = 0; i < users.length; ++i) {
+                                    if (users[i].full_user_id === $('#user_id').text()) {
+                                        userRole = users[i].type;
+
+                                        if (userRole === 'participant' && users[i].status === 'pending') {
+                                            userRole = 'pendingParticipant';
+                                        }
+
+                                        if(sessionListeners.indexOf(sess.session_id) < 0) {
+                                            KandyAPI.Session.setListeners(sess.session_id, listeners);
+                                            sessionListeners.push(sess.session_id);
+                                        }
+                                    }
+
+                                    //Build Participant List based on other participants
+                                    var participantListItem = '<li class="participantListItem">';
+                                    if (users[i].full_user_id !== $('#user_id').text()) {
+                                        participantListItem += users[i].full_user_id;
+                                    } else {
+                                        participantListItem += 'me'
+                                    }
+                                    participantListItem +=  '&nbsp\;' + '(' + users[i].type +  (users[i].type == 'admin' ? '' : ('/' + users[i].status )) + ')  ';
+                                    $('#participantsList').append(participantListItem);
+                                }
+                            }
+
+                            if (userRole === 'participant') {
+                                changeUIState('SESSION_PARTICIPANT');
+                            } else if (userRole === 'pendingParticipant') {
+                                changeUIState('SESSION_PENDING_PARTICIPANT');
+                            } else {
+                                changeUIState('SESSION_NONPARTICIPANT');
+                            }
+                        },
+                        function (msg, code) {
+                            $('#statusText').text("Error getting participant information for this session.")
+                        }
+                );
+
+            };
+
+            changeUIState = function (state) {
+                switch (state) {
+                    case 'LOGGED_OUT':
+                        $("#loginForm").show();
+                        $("#userDetails").hide();
+                        $('#loggedIn').hide();
+                        break;
+                    case 'NO_SESSION':
+                        $("#loginForm").hide();
+                        $("#userDetails").show();
+                        $('#loggedIn').show();
+                        $("#sessionsLoaded").hide();
+                        $("#noSessionsLoaded").show();
+                        $(".admin").hide();
+                        $(".participant").hide();
+                        $(".pendingParticipant").hide();
+                        $('.nonparticipant').hide();
+                        $('.allparticipants').hide();
+                        break;
+                    case 'SESSION_PARTICIPANT':
+                        $("#sessionsLoaded").show();
+                        $("#noSessionsLoaded").hide();
+                        $(".admin").hide();
+                        $(".participant").show();
+                        $(".pendingParticipant").show();
+                        $('.nonparticipant').hide();
+                        $('.allparticipants').show();
+                        break;
+                    case 'SESSION_PENDING_PARTICIPANT':
+                        $("#sessionsLoaded").show();
+                        $("#noSessionsLoaded").hide();
+                        $(".admin").hide();
+                        $(".participant").hide();
+                        $(".pendingParticipant").show();
+                        $('.nonparticipant').hide();
+                        $('.allparticipants').hide();
+                        break;
+                    case 'SESSION_NONPARTICIPANT':
+                        $("#sessionsLoaded").show();
+                        $("#noSessionsLoaded").hide();
+                        $(".admin").hide();
+                        $(".participant").hide();
+                        $(".pendingParticipant").hide();
+                        $('.nonparticipant').show();
+                        $('.allparticipants').hide();
+                        break;
+                }
+            };
+
+            clearSessionDetails = function () {
+                if (sessions.length > 0) {
+                    var sess = sessions[$("#sessions").val()].session_id;
+                    $('#session_type').text("");
+                    $('#session_name').text("");
+                    $('#session_status').text("");
+                    $('#creation_timestamp').text("");
+                    $('#expiry_timestamp').text("");
+                    $('#admin_full_user_id').text("");
+                    $('#domain_name').text("");
+                }
+            };
+
+            $("#sessionSelect").change(function () {
+                loadSessionDetails();
+            });
+
+        </script>
+        <style>
+            #participantList {
+                display: inline-block;
+                float:left;
+                margin-left:10px;
+            }
+            #sessionDetails {
+                float:left;
+                display: inline-block;
+            }
+            #sessionDetailWrapper {
+                display: block;
+                width: 100%;
+                clear: both;
+            }
+            #sessionButtons {
+                clear: both;
+            }
+            button, input, select {
+                margin-bottom: 2px;
+                margin-top: 2px;
+            }
+        </style>
+    </head>
+
+    <body onload="" style="">
+        <h2>Quick Start Sample App: Session Participation</h2>
+        <form id="loginForm">
+            <span id="loginStatus" style="color: #0000ff;"></span>
+            <br/>
+            Project API Key: <input id="domainApiId" type="text" value=""/>
+            <br/>
+            UserName: <input id="loginUserName" type="text" value=""/>
+            <br/>
+            Password: <input id="loginPassword" type="password" value=""/>
+            <br/>
+            <br/>
+            <input id="userloginBtn" type="button" value="User Log in" onclick="loginUser();
+                    return false;"/>
+        </form>
+
+        <div id="loggedIn" style="display:none">
+
+            <div id="userDetails">
+                <span style="font-weight:bold">User ID: </span><span id="user_id"></span><br/>
+                <span style="font-weight:bold">Status: </span><span id="statusText" style="color: blue;">Ready</span>
+            </div>
+            <hr style="clear:both"/>
+            <div style="font-weight:bold;margin-bottom:10px">Open Sessions:</div>
+            <div style="margin-top:10px;" id="noSessionsLoaded">
+                No sessions loaded.
+            </div>
+            <div id="sessionsLoaded" style="display:none;margin-left:20px;margin-top:10px">
+                <div id="sessionSelect">
+                    Select Session: <select id="sessions" style="" onchange="loadSessionDetails()"></select>
+                </div>
+                <br/>
+                <div id="sessionDetailWrapper">
+                    <div id="sessionDetails">
+                        <div style="font-weight:bold;margin-bottom:5px;">Details:</div>
+                        <li>Type: <span id="session_type"></span></li>
+                        <li>Name: <span id="session_name"></span></li>
+                        <li>Status: <span id="session_status"></span></li>
+                        <li>Created: <span id="creation_timestamp"></span></li>
+                        <li>Expires: <span id="expiry_timestamp"></span></li>
+                        <li>Admin: <span id="admin_full_user_id"></span></li>
+                        <br/>
+                    </div>
+                    <div id="participantList">
+                        <div style="font-weight:bold;margin-bottom:5px;">Participants:</div>
+                        <span id="participantsList"></span>
+                    </div>
+                </div>
+                <div id="sessionButtons">
+                    <div class="participant pendingParticipant">
+                        <button onclick="leaveSession()">Leave Selected Session</button>
+                    </div>
+                    <div class="allparticipants">
+                        <input type="text" id="session_data" value="" /><button onclick="sendData()">Send Data</button>
+                    </div>
+                    <div style="clear:both" id="sessionJoining" class="nonParticipant">
+                        <div id="sessionJoiningForm" style="clear:both;">
+                            <span style="">Session Joining:</span>
+                            <input type="text" id="join_user_nickname" value="nickName" />
+                            <input type="text" id="join_user_first_name" value="firstName" />
+                            <input type="text" id="join_user_last_name" value="lastName" />
+                            <input type="text" id="join_user_phone_number" value="phoneNumber" />
+                            <input type="text" id="join_user_email" value="email" />
+                            <button onclick="joinSession()">Join Selected Session</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>

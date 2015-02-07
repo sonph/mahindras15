@@ -1,0 +1,222 @@
+<html>
+<head>
+    <title>Multiple Calls</title>
+    <!-- All three files required for Kandy  -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.1/fcs.js"></script>
+    <script src="https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.1.0/kandy.js"></script>
+
+    <script language="JavaScript">
+        // we need to save the callId so we can interact with the call later.
+        calls = [];
+
+        setupAudio = function() {
+            ringInAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.ogg', type: 'audio/ogg'}
+            ];
+            ringOutAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.ogg', type: 'audio/ogg'}
+            ];
+            msgInAudioSrcs = [
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.mp3', type: 'audio/mp3'},
+                {src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/msgin.ogg', type: 'audio/ogg'}
+            ];
+
+            audio = {
+                ringIn: $('<audio/>', {loop: 'loop', id: 'ringInAudio'})[0],
+                ringOut: $('<audio/>', {loop: 'loop', id: 'ringOutAudio'})[0],
+                msgIn: $('<audio/>', {id: 'msgInAudio'})[0]
+            };
+
+            // setup Msg sources
+            for (var i = 0; i < msgInAudioSrcs.length; i++) {
+                audio.msgIn.appendChild($('<source/>', msgInAudioSrcs[i])[0]);
+            }
+
+            // setup RingIn sources
+            for (var i = 0; i < ringInAudioSrcs.length; i++) {
+                audio.ringIn.appendChild($('<source/>', ringInAudioSrcs[i])[0]);
+            }
+
+            // setup RingOut sources
+            for (var i = 0; i < ringOutAudioSrcs.length; i++) {
+                audio.ringOut.appendChild($('<source/>', ringOutAudioSrcs[i])[0]);
+            }
+        };
+
+        // called when page is done loading to initialize KandyAPI
+        setup = function() {
+            setupAudio();
+
+            // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
+            KandyAPI.Phone.setup({
+                remoteVideoContainer: $('#theirVideo')[0],
+                localVideoContainer: $('#myVideo')[0],
+
+                // respond to Kandy events...
+                listeners: {
+                    loginsuccess: function () {
+                        KandyAPI.Phone.updatePresence(0);
+                        $('#loggedIn').show();
+                        $('#logInForm').hide();
+                        $('#loggedInAs').text($('#logInId').val());
+                    },
+                    loginfailed: function () {
+                        alert("Login failed");
+                    },
+                    callincoming: function (call, isAnonymous) {
+                        audio.ringIn.play();
+                        calls[call.getId()] = call;
+
+                        var callerName = call.callerName;
+
+                        var html = '<div class="callContainer" data-call-id="' + call.getId() + '" style="border:solid 1px black;">Incoming Call from ' + callerName;
+                        html += '&nbsp;&nbsp;<input class="answerBtn" data-call-id="' + call.getId() + '" type="button" value="Answer" onclick="answerVideoCall(\'' + call.getId() + '\')" style="width:90px;height:23px;"/>';
+                        html += '<input class="holdBtn" data-call-id="' + call.getId() + '" type="button" value="Hold" style="display:none;width:90px;height:23px;"/>';
+                        html += '<input class="endBtn" data-call-id="' + call.getId() + '" type="button" value="End" style="display:none;width:90px;height:23px;"/>';
+                        html += '</div>';
+
+                        $(html).appendTo($('#someonesCalling'));
+                    },
+                    // when an incoming call is connected
+                    callanswered: function (call, isAnonymous) {
+                        audio.ringIn.pause();
+                        var callId = call.getId();
+
+                        for (key_name in calls){
+                            if(key_name != callId){
+                                holdCall(key_name);
+                            }
+                        }
+                        var answerBtn = $('.answerBtn[data-call-id="'+callId+'"]');
+                        answerBtn.hide();
+
+                        var holdBtn = $('.holdBtn[data-call-id="'+callId+'"]');
+                        holdBtn.bind('click', function(){
+                            holdCall(callId);
+                        });
+                        holdBtn.show();
+
+                        var endBtn = $('.endBtn[data-call-id="'+callId+'"]');
+                        endBtn.bind('click', function(){
+                            endCall(callId);
+                        });
+                        endBtn.show();
+                    },
+                    callended: function (call) {
+                        audio.ringIn.pause();
+
+                        $('.callContainer[data-call-id="'+call.getId()+'"]').remove();
+                        delete calls[call.getId()];
+                    }
+                }
+            });
+        };
+
+        login = function () {
+            KandyAPI.Phone.login($("#domainApiId").val(), $("#logInId").val(), $('#passwd').val());
+        };
+
+        logout = function () {
+            for (key_name in calls){
+                endCall(key_name);
+            }
+
+            KandyAPI.Phone.logout(function () {
+                $('#loggedIn').hide();
+                $('#logInForm').show();
+            });
+        };
+
+        answerVideoCall = function (callId) {
+            KandyAPI.Phone.answerCall(callId, true);
+        };
+
+        makeCall = function () {
+            KandyAPI.Phone.makeCall($('#callOutUserId').val(), true);
+        };
+
+        holdCall = function(callId){
+            var holdBtn = $('.holdBtn[data-call-id="'+callId+'"]');
+
+            holdBtn.val('Unhold');
+            holdBtn.unbind('click').bind('click', function(){
+                unHoldCall(callId);
+            });
+
+            KandyAPI.Phone.holdCall(callId);
+        };
+
+        unHoldCall = function(callId){
+            var holdBtn = $('.holdBtn[data-call-id="'+callId+'"]');
+
+            for (key_name in calls){
+                if(key_name != callId){
+                    holdCall(key_name);
+                }
+            }
+
+            holdBtn.val('Hold');
+            holdBtn.unbind('click').bind('click', function(){
+                holdCall(callId);
+            });
+
+            KandyAPI.Phone.unHoldCall(callId);
+        };
+
+        endCall = function (callId) {
+            KandyAPI.Phone.endCall(callId);
+        };
+
+    </script>
+
+    <style>
+        .callContainer {padding: 5px;}
+        #videos {width:695px}
+        #theirVideo {background-color:darkslategray;width:334px;height:250px;display:inline-block;}
+        #myVideo {background-color:darkslategray;width:334px;height:250px;display:inline-block;float:right}
+        #meLabel {width:340px;text-align:right;display:inline-block}
+    </style>
+
+</head>
+
+
+<body onload="setup();" style="width:500px;">
+<h2>Quick Start Sample App: Multiple Calls</h2>
+This sample application demonstrates the code for answering multiple video calls with Kandy.
+<br/>
+<hr>
+<br/>
+
+<form id="logInForm">
+    Project API Key: <input id="domainApiId" type="text" style="width:200px;margin-bottom:1px;" value=""/><br/>
+    Username: <input id="logInId" type="text" style="width:200px;margin:0 0 1px 64px;" value=""  placeholder="username (e.g. user1)"/><br/>
+    Password: <input id="passwd" type="password" style="width:200px;margin-left:41px;" value=""/><br/>
+    <input id="loginBtn" type="button" value="Log in" onclick="login();return false;"
+           style="width:90px;height:23px;margin:5px 0 5px 110px;"/>
+</form>
+
+<div id="loggedIn" style="display:none">
+    Hello <span id="loggedInAs"></span>.
+    <input id="logoutBtn" type="button" value="Log Out" onclick="logout();return false;"
+           style="width:90px;height:23px;"/>
+
+    <hr>
+    <br/>
+
+    <div id="someonesCalling">
+    </div>
+
+    <br/>
+    <br/>
+
+    <div id="videos">
+        Them:<span id="meLabel">Me:</span>
+        <span id="theirVideo" style="display:inline-block"></span>
+        <span id="myVideo"></span>
+    </div>
+</div>
+</body>
+</html>
