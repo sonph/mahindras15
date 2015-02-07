@@ -385,9 +385,9 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
     editor_left.setFontSize(13);
     editor_left.$blockScrolling = Infinity;
 
-
-    $('#loginBtn').on('click', login);
     setup();
+    $('#loginBtn').on('click', login);
+    $('#logout').on('click', logout);
   });
 
 }]);
