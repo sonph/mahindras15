@@ -69,27 +69,17 @@
 
 /* KANDY CALL CONTROL */
 #login {
-  border:1px solid black;
-  width:334px;
-  height:250px;
   text-align:center;
   vertical-align:middle;
   display:table-cell;
 }
 
 #loginForm {
-  width:260px;
   margin:0 auto;
   display:inline-block;
 }
 
 #logout {
-  color:#5A0F7D;
-   text-decoration: underline;
-   width:100%;
-   text-align:right;
-  text-size:1em;
-  margin-right:10px;
   visibility:hidden;
 }
 
@@ -102,7 +92,7 @@
 
 #call_control {
   position:relative;
-  border:5px solid #5A0F7D;
+  border:1px solid #5A0F7D;
   background-color:white;
   color:black;
   width:340px;

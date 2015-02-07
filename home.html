@@ -7,8 +7,7 @@
       <td><div id='call_control'>
         <div id="mainControl">
           <!-- user is logged in and may log out -->
-          <div id="logout">Log out</div>
-
+          <a id="logout" class="waves-effect waves-light btn">Log Out</a>
           <!-- title -->
           <div id="myTitle">Kandy Phone</div>
 
@@ -17,27 +16,24 @@
           <!-- via callback from the KandyAPI (when connected to other      -->
           <!-- user).  See comments in the remotevideoinitialized callback. -->
           <!------------------------------------------------------------------>
-          <div id="videoPane">
-
-          </div>
+          <div id="videoPane"></div>
 
           <!-- login form -->
           <div id="login" style="display:none">
-            <form id="loginForm" onsubmit="alert('This form should not be submitted!');">
-              <label for="loginId">Username: </label>
-              <input id="loginId" type="text" style="width:200px;" value="" placeholder="username (e.g. user1)"/>
-              <br/><br/>
-              <input id="loginBtn" type="button" value="Log in"/>
+            <form id="loginForm">
+              <input id="loginId" type="text" style="width:200px;" value="" placeholder="username"/>
+              <a id="loginBtn" class="waves-effect waves-light btn">Login</a>
+              <!-- <input id="loginBtn" type="button" value="Log in"/> -->
             </form>
           </div>
 
           <!-- user is logged in, but not on call -->
           <div id="readyForCalling" style="display:none">
-            <form name="callOutForm" onsubmit="alert('this form should never submit');">
-              <label for="callOutId">User to Call: </label>
+            <form id="callOutForm">
               <input id="callOutId" type="text" style="width:170px" value="" placeholder="username@domain.com"/>
-              &nbsp;
-              <input id="callBtn" type="submit" value="Call" style="width:52px;"/>
+
+              <a id="callBtn" class="waves-effect waves-light btn">Call</a>
+              <!-- <input id="callBtn" type="submit" value="Call" style="width:52px;"/> -->
             </form>
           </div>
 
@@ -45,21 +41,27 @@
           <div id="someonesCalling" style="display:none">
             <label for="callOutId">Incoming Call</label>
             &nbsp;
-            <input id="answerVideoCallBtn" type="button" value="Answer" style="width:90px;height:23px;"/>
-            <input id="rejectCallBtn" type="button" value="Decline" style="width:90px;height:23px;"/>
+            <a id="answerVideoCallBtn" class="waves-effect waves-light btn">Answer</a>
+            <a id="rejectCallBtn" class="waves-effect waves-light btn">Decline</a>
+            <!-- <input id="answerVideoCallBtn" type="button" value="Answer" style="width:90px;height:23px;"/> -->
+            <!-- <input id="rejectCallBtn" type="button" value="Decline" style="width:90px;height:23px;"/> -->
             <input id="otherPartyName" type="hidden" />
           </div>
 
           <!-- initiated call, waiting for it to be answered -->
           <div id="callingOut" style="display:none">
-            <input id="hangUpCallOutBtn" type="button" value="End Call" style="width:90px;height:23px;"/>
+            <a id="hangUpCallOutBtn" class="waves-effect waves-light btn">End Call</a>
+            <!-- <input id="hangUpCallOutBtn" type="button" value="End Call" style="width:90px;height:23px;"/> -->
           </div>
 
           <!-- user is on an active call -->
           <div id="onCall" style="display:none">
-            <input id="holdBtn" type="button" value="Hold" style="width:90px;height:23px;"/>
-            <input id="unholdBtn" type="button" value="Unhold" style="width:90px;height:23px;"/>
-            <input id="hangUpBtn" type="button" value="End Call" style="width:90px;height:23px;"/>
+            <a id="holdBtn" class="waves-effect waves-light btn">Hold</a>
+            <a id="unholdBtn" class="waves-effect waves-light btn">Unhold</a>
+            <a id="hangUpBtn" class="waves-effect waves-light btn">End Call</a>
+            <!-- <input id="holdBtn" type="button" value="Hold" style="width:90px;height:23px;"/> -->
+            <!-- <input id="unholdBtn" type="button" value="Unhold" style="width:90px;height:23px;"/> -->
+            <!-- <input id="hangUpBtn" type="button" value="End Call" style="width:90px;height:23px;"/> -->
           </div>
           <br/>
         </div>

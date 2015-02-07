@@ -395,6 +395,9 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
+
+    $('#loginForm').on('submit', login);
+    $('#callOutForm').on('submit', makeCall);
   });
 
 }]);
