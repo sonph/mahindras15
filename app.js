@@ -86,14 +86,6 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
     $('.button-collapse').sideNav();
   });
 
-  $(document).ready(function() {
-    // setup editor
-    var editor_left = ace.edit("left");
-    editor_left.setTheme("ace/theme/xcode");
-    editor_left.getSession().setMode("ace/mode/javascript");
-    editor_left.setFontSize(13);
-    editor_left.$blockScrolling = Infinity;
-  });
 
   // setup kandy
   var uiState = '';
@@ -254,7 +246,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 
   var login = function() {
       try {
-          KandyAPI.Phone.login($("#domainApiId").val(), $("#loginId").val(), $('#passwd').val());
+          KandyAPI.Phone.login('DAKe20a56c25eb74349beab5a0bfff9fad6', $("#loginId").val(), '123456a@');
       } catch(err) {
           alert("Error in login(): " + err.message);
       }
@@ -367,31 +359,42 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
       }
   }
 
-  $(window).bind('beforeunload', function(e) {
-      console.debug('leaving page');
-      try {
-          if (isOnCall()) {
-              KandyAPI.Phone.endCall(callId);
-          }
-          KandyAPI.Phone.logout(function () {
-          });
-      } catch (err) {
-          //swallow it
-      }
-      var message = null;
-      e.returnValue = null;
-      return message;
+  // $(window).bind('beforeunload', function(e) {
+  //     console.debug('leaving page');
+  //     try {
+  //         if (isOnCall()) {
+  //             KandyAPI.Phone.endCall(callId);
+  //         }
+  //         KandyAPI.Phone.logout(function () {
+  //         });
+  //     } catch (err) {
+  //         //swallow it
+  //     }
+  //     var message = null;
+  //     e.returnValue = null;
+  //     return message;
+  // });
+
+
+
+  $(document).ready(function() {
+    // setup editor
+    var editor_left = ace.edit("left");
+    editor_left.setTheme("ace/theme/xcode");
+    editor_left.getSession().setMode("ace/mode/javascript");
+    editor_left.setFontSize(13);
+    editor_left.$blockScrolling = Infinity;
+
+
+    $('#loginBtn').on('click', login);
+    setup();
   });
 
-  setup();
-
-
-
 }]);
 
 
-app.controller('AboutCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-  $rootScope.root = {
-    title: 'About'
-  };
-}]);
+// app.controller('AboutCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+//   $rootScope.root = {
+//     title: 'About'
+//   };
+// }]);
