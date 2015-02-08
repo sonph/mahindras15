@@ -1823,7 +1823,7 @@ api.Phone = (function () {
                   success: function (response) {
                     if (response.status === responseCodes.OK) {
                       if (success) {
-                        success(uuid);
+                        success(fileUuid);
                       }
                     } else if (failure) {
                       failure(response.message, response.status);

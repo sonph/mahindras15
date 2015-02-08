@@ -234,11 +234,13 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
               }
             } else if (msg.contentType == 'file') {
 
+              var content_uuid = msg.message.content_uuid;
+
               // TODO: ask kandy guys that the thumbnail link is broken
               var fileURL = KandyAPI.Phone.buildFileUrl(content_uuid);
               var thumbnailURL = KandyAPI.Phone.buildFileThumbnailUrl(content_uuid);
               $('#msg_box').append(
-                '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
+                '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><img class="materialboxed message-img" src="' + thumbnailURL + '"></div></div>'
               );
             }
             
@@ -259,6 +261,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
   
   $(document).ready(function() {
     $('.tooltipped').tooltip({delay: 50});
+    $('.materialboxed').materialbox();
 
     // setup editor
     // var editor_left = ace.edit("left");
@@ -316,7 +319,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
 
           // TODO: ask Kandy guy: link is broken
           $('#msg_box').append(
-            '<div id="msg-' + content_uuid + '"><span style="color:#ff6868">You: </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
+            '<div id="msg-' + content_uuid + '"><span style="color:#ff6868">You: </span><img class="materialboxed message-img" src="' + thumbnailURL + '"></div></div>'
           );
         },
         function() {
