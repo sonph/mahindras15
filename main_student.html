@@ -1,0 +1,167 @@
+<div class="section row container" id="intro">
+</div>
+
+<div class="section row container">
+        <!---------------------------- COBROWSE ------------------------------>
+        <!-- <div id="editor"></div> -->
+        <iframe src="KandyQsCobrowsingAgent.html" frameborder="0" id="editor"></iframe>
+
+
+        <!-- <div id="cobrowse-div">
+          <div id="loggedIn" style="display:none">
+              <div style="font-weight:bold">Session Loading & Selection:</div>
+              <br/>
+              <button onclick="getOpenSessions()">Get Open Sessions</button>
+              <br/><br/>
+              <div id="noSessionsLoaded">
+                  No sessions loaded.<br/>
+                  <br/>
+              </div>
+              <div id="sessionsLoaded" style="display:none;margin-left:20px">
+                  <div id="sessionSelect">
+                      Select Session: <select id="sessions" style="" onchange="loadSessionDetails()"></select>
+                  </div>
+                  <div id="sessionDetails" style="margin-left:110px">
+                      Type: <span id="session_type"></span><br/>
+                      Status: <span id="session_status"></span><br/>
+                      Admin: <span id="session_admin"></span><br/>
+                      <br/>
+                  </div>
+                  <div class="participant">
+                      <button onclick="leaveSession()">Leave Selected Session</button>
+                      <div id="startCoBrowse">
+                          <button onclick="startCoBrowseAgent()">Start CoBrowsing Viewer</button>
+                      </div>
+                      <div id="stopCoBrowse" style="display: none;">
+                          <button onclick="stopCoBrowseAgent()">Stop CoBrowsing Viewer</button>
+                      </div>
+                  </div>
+              </div>
+              <hr style="clear:both"/>
+          
+              <div style="clear:both" id="sessionJoining" class="nonParticipant">
+                  <button onclick="joinSession()">Join Selected Session</button>
+              </div>
+              
+              <div id="cobrowsing-holder" style="border: 1px solid blue">
+              </div>
+          </div>
+        </div> -->
+
+      <div id="right">
+        <!---------------------------- VIDEO CALL -------------------------->
+        <div id='call_control'>
+        <div id="status" class="row center">
+          <span id="statusLabel"></span><span id="statusMsg"></span>
+        </div>
+        <div id="preloader-div" class="center row">
+        <div id="preloader-spacer"></div>
+        <div id="preloader" class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+              <div class="circle">
+              </div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+          <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+          <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+          <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+          
+        </div>
+
+        <div id="mainControl">
+          <!------------------------------------------------------------------>
+          <!-- This DIV will hold the <VIDEO> element when it is given      -->
+          <!-- via callback from the KandyAPI (when connected to other      -->
+          <!-- user).  See comments in the remotevideoinitialized callback. -->
+          <!------------------------------------------------------------------>
+          <div id="videoPane"></div>
+
+          <div id="buttons" class="center">
+            <!-- user is logged in, but not on call -->
+            <div id="readyForCalling" style="display:none">
+                <a id="callBtn" class="waves-effect waves-light btn">Call<i class="mdi-communication-phone left"></i></a>
+            </div>
+
+            <!-- receiving a call, but haven't answered yet -->
+            <div id="someonesCalling" style="display:none">
+              <a id="answerVideoCallBtn" class="waves-effect waves-light btn green">Answer</a>
+              <a id="rejectCallBtn" class="waves-effect waves-light btn red">Decline</a>
+            </div>
+
+            <!-- initiated call, waiting for it to be answered -->
+            <div id="callingOut" style="display:none">
+              <a id="hangUpCallOutBtn" class="waves-effect waves-light btn red">End Call</a>
+            </div>
+
+            <!-- user is on an active call -->
+            <div id="onCall" style="display:none">
+              <a id="holdBtn" class="waves-effect waves-light btn">Hold</a>
+              <a id="unholdBtn" class="waves-effect waves-light btn">Unhold</a>
+              <a id="hangUpBtn" class="waves-effect waves-light btn red">End</a>
+            </div>
+            
+          </div>
+        </div>
+        </div>
+
+        <!-- -------------------------- TEACHER'S FEEDBACK ------------------ -->
+        <div id="feedback-buttons" class="teacher-only">
+          <a id="feedback-good" href="" class="waves-effect waves-light btn btn-sm green">Good<i></i></a>
+          <a id="feedback-avg" href="" class="waves-effect waves-light btn yellow">Avg<i></i></a>
+          <a id="feedback-bad" href="" class="waves-effect waves-light btn red">Bad<i></i></a>
+        </div>
+
+
+        <!-- ------------------------------ CHAT ----------------------------- -->
+        <div id="chat">
+          <ul id="msg_box"></ul>
+          <div id="message-box" class="row">
+            <i id="add-file" class="small mdi-content-add tooltipped" data-position="top" data-delay="50" data-tooltip="Add a file"><input id="input-file" type="file"/></i>
+          <input type="text" id="chat_box" placeholder="Message"></input>
+          </div>
+        </div>
+
+        <div id="status">
+          <span class="statusLabel"></span><span id="statusMsg"></span>
+        </div>
+      </div>
+    </div>
+</div>
