@@ -2,9 +2,6 @@
 </div>
 
 <div class="section row container">
-  <table>
-    <tr>
-      <td>
         <!---------------------------- COBROWSE ------------------------------>
         <div id="cobrowse-div">
           <div id="loggedIn" style="display:none">
@@ -46,8 +43,7 @@
           </div>
         </div>
 
-      </td>
-      <td>
+      <div id="right">
         <!---------------------------- VIDEO CALL -------------------------->
         <div id='call_control'>
         <div id="status" class="row center">
@@ -140,19 +136,20 @@
           </div>
         </div>
 
+        <div class="divider"></div>
+
         <!-- ------------------------------ CHAT ----------------------------- -->
-        <div class="row">
+        <div>
           <div id="chat">
             <ul id="msg_box"></ul>
-            <input type="text" id="chat_box"></input>
+            <div class="divider"></div>
+            <input type="text" id="chat_box" placeholder="Message"></input>
           </div>
         </div>
 
-        <div id="status" style="text-align:center;width:100%">
+        <div id="status">
           <span class="statusLabel"></span><span id="statusMsg"></span>
         </div>
       </div>
-      </td>
-    </tr>
-  </table>
+    </div>
 </div>
