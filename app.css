@@ -211,3 +211,8 @@ input#chat_box {
 .ace_active-line, .ace-line, .ace_selection {
   z-index:0 !important;
 }
+
+span.card-title {
+  background: gray;
+  padding: 5px;
+}

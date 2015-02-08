@@ -8,7 +8,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     controller: 'HomeCtrl'
   })
   .when('/student', {
-    templateUrl: 'main.html',
+    templateUrl: 'main_student.html',
     controller: 'StudentCtrl',
     resolve: {
       USER: function() { return 'STUDENT'; }
