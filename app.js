@@ -179,6 +179,9 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     title: 'Student'
   };
 
+  $scope.YOU = TEACHER_CALL_USER;
+  $scope.ME = STUDENT_CALL_USER;
+
   var sendMsg = function() {
     var uuid = KandyAPI.Phone.sendIm(TEACHER_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
       function(result) {
@@ -188,7 +191,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
           $('#chat_box').val('');
       },
       function(message, status) {
-          alert("Error " + message + "; status=" + status);
+        toast('Error: ' + message + ', status: ' + status, 4000);
       }
     );
   };
@@ -199,7 +202,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
         var msg = data.messages[iter];
         if (msg.messageType == 'chat') {
           var username = msg.sender.user_id;
-          if (username == TEACHER_CALL_USER) {
+          if (username == $scope.YOU) {
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
             $('#msg_box').append('<div><span style="color:#68a9ff">Teacher: </span><span>' + msg.message.text + '</span></div>');
@@ -226,7 +229,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy video call
     setLogoutOnUnload();
     setup();
-    login(STUDENT_CALL_USER);
+    login($scope.ME);
 	setInterval(getMsg, 3000);
 
     // setup kandy cobrowsing
@@ -246,6 +249,19 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
+
+    $('#input-file').on('change', function() {
+      toast('You chose a file', 4000);
+      var file = document.getElementById("input-file").files[0]; 
+      var uuid = KandyAPI.Phone.sendImWithFile($scope.YOU, file,
+        function() {  // success function
+            // YOUR CODE GOES HERE
+        },
+        function() {
+          toast('Failed to send file', 4000);
+        }
+    );
+    });
 
     $('#chat_box').on('keypress', function() {
       if (window.event.keyCode == 13) {
