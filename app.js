@@ -110,6 +110,8 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 // }]);
 
 app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, $rootScope, USER) {
+  $scope.USER = USER;
+
   if (USER == 'STUDENT') {
     $rootScope.root = {
       title: 'Student'
@@ -226,7 +228,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
                 $('#msg_box').append(
                   '<div class="center"><span style="color: #A0A0A0">Teacher has provided <span style="color:#f44336">bad</span> feedback.</div>'
                 );
-                toast('Teacher has provided bad feedback.</span>', 4000);
+                toast('Teacher has provided bad feedback.', 4000);
               } else {
                 $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
               }
@@ -285,7 +287,15 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
 
 
     $('#callBtn').on('click', function () {
-      makeCall($scope.YOU);
+      if ($scope.contactOnline == false) {
+        if ($scope.USER == 'TEACHER') {
+          KandyAPI.Phone.makePSTNCall(STUDENT_PHONE_NUMBER, 'Teacher');
+        } else {
+          KandyAPI.Phone.makePSTNCall(TEACHER_PHONE_NUMBER, 'Student');
+        }
+      } else {
+        makeCall($scope.YOU);
+      }
     });
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
