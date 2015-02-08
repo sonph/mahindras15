@@ -120,23 +120,41 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     $scope.presenceWatch = [
       {full_user_id: TEACHER_CALL_USER + '@' + DOMAIN_NAME}
     ];
+    $('.teacher-only').hide();
   } else {
     $rootScope.root = {
       title: 'Teacher'
     };
     $scope.YOU = STUDENT_CALL_USER;
     $scope.ME = TEACHER_CALL_USER;
-    $scope.chatName = 'Student'
+    $scope.chatName = 'Student';
+    $('.teacher-only').show();
+    $('#msg_box').css('margin-top', '375px');
+    $('#feedback-buttons').fadeIn();
   }
 
-  var sendMsg = function() {
-    var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, $('#chat_box').val(),
+  var sendMsg = function(text) {
+    var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, text !== undefined ? text : $('#chat_box').val(),
       function(result) {
         // toast(JSON.stringify(result), 4000);
+        if (text == '#FEEDBACK-GOOD') {
+          $('#msg_box').append(
+            '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#4caf50">good</span> feedback.</span></div>'
+          );
+        } else if (text == '#FEEDBACK-AVG') {
+          $('#msg_box').append(
+            '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#ffeb3b">average</span> feedback.</span></div>'
+          );
+        } else if (text == '#FEEDBACK-BAD') {
+          $('#msg_box').append(
+            '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#f44336">bad</span> feedback.</span></div>'
+          );
+        } else {
           $('#msg_box').append('<div><span id="msg-' + result.UUID + '" style="color:#ff6868">You: </span>' +
                   '<span>' + $('#chat_box').val() + '</span>' +
                   '</div>');
           $('#chat_box').val('');
+        }
       },
       function(message, status) {
         toast('Error: ' + message + ', status: ' + status, 4000);
@@ -168,7 +186,24 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
             if (msg.contentType == 'text') {
-              $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
+              if (msg.message.text == '#FEEDBACK-GOOD') {
+                $('#msg_box').append(
+                  '<div class="center"><span style="color: #A0A0A0">Teacher has provided <span style="color:#4caf50">good</span> feedback.</div>'
+                );
+                toast('Teacher has provided good feedback.', 4000);
+              } else if (msg.message.text == '#FEEDBACK-AVG') {
+                $('#msg_box').append(
+                  '<div class="center"><span style="color: #A0A0A0">Teacher has provided <span style="color:#ffeb3b">average</span> feedback.</div>'
+                );
+                toast('Teacher has provided average feedback.', 4000);
+              } else if (msg.message.text == '#FEEDBACK-BAD') {
+                $('#msg_box').append(
+                  '<div class="center"><span style="color: #A0A0A0">Teacher has provided <span style="color:#f44336">bad</span> feedback.</div>'
+                );
+                toast('Teacher has provided bad feedback.</span>', 4000);
+              } else {
+                $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
+              }
             } else if (msg.contentType == 'file') {
 
               // TODO: ask kandy guys that the thumbnail link is broken
@@ -258,6 +293,18 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
       if (window.event.keyCode == 13) {
         sendMsg();
       }
+    });
+
+    $('#feedback-good').on('click', function() {
+      sendMsg('#FEEDBACK-GOOD');
+    });
+
+    $('#feedback-avg').on('click', function() {
+      sendMsg('#FEEDBACK-AVG');
+    });
+
+    $('#feedback-bad').on('click', function() {
+      sendMsg('#FEEDBACK-BAD');
     });
   });
 }]);

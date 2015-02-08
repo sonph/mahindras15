@@ -168,3 +168,12 @@ input#chat_box {
   border: 1px solid gray;
   opacity: 0.01;
 }
+
+#feedback-buttons {
+  position: fixed;
+  margin-top: 315px;
+  border-top: 1px solid gray;
+  padding-top: 10px;
+  width: 100%;
+  padding-left: 15px;
+}
