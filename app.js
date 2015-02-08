@@ -218,14 +218,22 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     $('#input-file').on('change', function() {
       toast('You chose a file', 4000);
       var file = document.getElementById("input-file").files[0]; 
-      var uuid = KandyAPI.Phone.sendImWithFile($scope.YOU, file,
-        function() {  // success function
+      $scope.fileUUID = KandyAPI.Phone.sendImWithFile($scope.YOU + '@' + DOMAIN_NAME, file,
+        function(content_uuid) {  // success function
             // YOUR CODE GOES HERE
+          toast(content_uuid, 4000);
+          var fileURL = KandyAPI.Phone.buildFileUrl(content_uuid);
+          var thumbnailURL = KandyAPI.Phone.buildFileThumbnailUrl(content_uuid);
+
+          // TODO: ask Kandy guy: link is broken
+          $('#msg_box').append(
+            '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
+          );
         },
         function() {
           toast('Failed to send file', 4000);
         }
-    );
+      );
     });
 
     $('#chat_box').on('keypress', function() {
