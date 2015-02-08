@@ -182,7 +182,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   var sendMsg = function() {
     var uuid = KandyAPI.Phone.sendIm(TEACHER_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
       function(result) {
-          $('#msg_box').append('<div><span>You:</span>' +
+          $('#msg_box').append('<div><span style="color:#ff6868">You: </span>' +
                   '<span>' + $('#chat_box').val() + '</span>' +
                   '</div>');
           $('#chat_box').val('');
@@ -202,7 +202,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
           if (username == TEACHER_CALL_USER) {
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
-            $('#msg_box').append('<div><span>Teacher: </span><span>' + msg.message.text + '</span></div>');
+            $('#msg_box').append('<div><span style="color:#68a9ff">Teacher: </span><span>' + msg.message.text + '</span></div>');
           } else {
             console.debug(msg.sender.user_id);
           }

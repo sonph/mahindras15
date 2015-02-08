@@ -118,10 +118,11 @@ input#chat_box {
 
 #msg_box {
   width: 300px;
+  margin: 0px;
+  margin-top: 300px;
   height: 100%;
   overflow: scroll;
   padding: 5px;
-  margin: 0px;
   position: fixed;
 }
 
@@ -153,4 +154,16 @@ input#chat_box {
   right: 0;
   /*position: absolute;*/
   position: fixed;
+}
+
+#input-file {
+  /*position: absolute;*/
+  /*bottom: -100px;*/
+  width: 20px;
+  height: 20px;
+  position: fixed;
+  right: 260px;
+  bottom: 27px;
+  border: 1px solid gray;
+  opacity: 0.01;
 }
