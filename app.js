@@ -152,18 +152,30 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
 
         // take a look at the message
         // toast(JSON.stringify(msg), 4000);
+        // window.prompt('message:', JSON.stringify(msg));
 
         if (msg.messageType == 'chat') {
           var username = msg.sender.user_id;
 
             // TODO : if the logged in user is a teacher and the user he/she is chatting with
             // is not the sender, open a toast saying another student has sent him/her a message
+            // toast('User id: ' + msg.sender.user_id, 4000);
 
           if (username == $scope.YOU) {
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
-            $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
-            // toast('User id: ' + msg.sender.user_id, 4000);           
+            if (msg.contentType == 'text') {
+              $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
+            } else if (msg.contentType == 'file') {
+
+              // TODO: ask kandy guys that the thumbnail link is broken
+              var fileURL = KandyAPI.Phone.buildFileUrl(content_uuid);
+              var thumbnailURL = KandyAPI.Phone.buildFileThumbnailUrl(content_uuid);
+              $('#msg_box').append(
+                '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
+              );
+            }
+            
           } else {
             console.debug(msg.sender.user_id);
           }
@@ -227,7 +239,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
 
           // TODO: ask Kandy guy: link is broken
           $('#msg_box').append(
-            '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
+            '<div id="msg-' + content_uuid + '"><span style="color:#ff6868">You: </span><div class="materialboxed" src="' + thumbnailURL + '" height="150px" width="200px"></div></div>'
           );
         },
         function() {
