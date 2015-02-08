@@ -137,3 +137,16 @@
 #cobrowse-div {
   width: 500px;
 }
+
+input#chat_box {
+  width: 298px;
+  height: 30px;
+  border: 1px solid gray;
+}
+
+#msg_box {
+  width: 298px
+  border: 1px gray;
+  max-height: 200px;
+  overflow: scroll;
+}
