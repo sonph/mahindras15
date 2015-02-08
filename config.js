@@ -7,5 +7,5 @@ var STUDENT_CALL_USER = 'user2';
 var TEACHER_COBROWSE_USER = 'user3';
 var STUDENT_COBROWSE_USER = 'user4';
 
-// var SESSION_ID = '{"session_id":"a02fbbe3b1904c7abe8efa094337a1e4","session_type":"support","session_status":"active","creation_timestamp":1423361313873,"expiry_timestamp":1423382913873,"admin_full_user_id":"user3@mahindra15.com","domain_name":"mahindra15.com"}';
-var SESSION_ID = 'a02fbbe3b1904c7abe8efa094337a1e4';
+var SESSION = '{"session_id":"52007725c35f41068cac4fc8db4f2348","session_type":"support","session_status":"inactive","creation_timestamp":1423365412828,"expiry_timestamp":1423387012827,"admin_full_user_id":"user3@mahindra15.com","domain_name":"mahindra15.com"}';
+var SESSION_ID = '52007725c35f41068cac4fc8db4f2348';

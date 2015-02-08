@@ -145,11 +145,21 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // editor_left.setFontSize(13);
     // editor_left.$blockScrolling = Infinity;
 
-    // setup kandy
+    // setup kandy video call
     setLogoutOnUnload();
     setup();
-    loginUser();
     login(STUDENT_CALL_USER);
+
+    // setup kandy cobrowsing
+    loginUser();
+    // var session = JSON.parse(SESSION);
+    // getOpenSessions();
+    // leaveSession(session);
+    // loadSessionDetails(session);
+    // joinSession(session);
+    // startCoBrowseAgent(session);
+
+
     $('#callBtn').on('click', makeCall);
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
