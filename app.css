@@ -116,7 +116,9 @@
 #status {
   text-align: center;
   width: 300px;
-  height: 250px;
+  /*height: 250px;*/
+  position: absolute;
+  padding-top: 10px;
 }
 
 #buttons {
@@ -131,9 +133,9 @@
   height: 100px;
 }
 
-#status {
-  position: absolute;
-  padding-top: 10px;
+/*************************** COBROWSE *******************/
+#cobrowse-div {
+  width: 500px;
 }
 
 input#chat_box {

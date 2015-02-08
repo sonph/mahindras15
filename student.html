@@ -5,7 +5,8 @@
   <table>
     <tr>
       <td>
-        <div id="left"></div>
+        <!---------------------------- COBROWSE ------------------------------>
+        
       </td>
       <td>
         <!---------------------------- VIDEO CALL -------------------------->
@@ -111,6 +112,49 @@
       </td>
     </tr>
   </table>
+</div>
+
+
+<div class="section row container">
+  <div id="cobrowse-div">
+          <div id="loggedIn" style="display:none">
+              <div style="font-weight:bold">Session Loading & Selection:</div>
+              <br/>
+              <button onclick="getOpenSessions()">Get Open Sessions</button>
+              <br/><br/>
+              <div id="noSessionsLoaded">
+                  No sessions loaded.<br/>
+                  <br/>
+              </div>
+              <div id="sessionsLoaded" style="display:none;margin-left:20px">
+                  <div id="sessionSelect">
+                      Select Session: <select id="sessions" style="" onchange="loadSessionDetails()"></select>
+                  </div>
+                  <div id="sessionDetails" style="margin-left:110px">
+                      Type: <span id="session_type"></span><br/>
+                      Status: <span id="session_status"></span><br/>
+                      Admin: <span id="session_admin"></span><br/>
+                      <br/>
+                  </div>
+                  <div class="participant">
+                      <button onclick="leaveSession()">Leave Selected Session</button>
+                      <div id="startCoBrowse">
+                          <button onclick="startCoBrowseAgent()">Start CoBrowsing Viewer</button>
+                      </div>
+                      <div id="stopCoBrowse" style="display: none;">
+                          <button onclick="stopCoBrowseAgent()">Stop CoBrowsing Viewer</button>
+                      </div>
+                  </div>
+              </div>
+              <hr style="clear:both"/>
+          
+              <div style="clear:both" id="sessionJoining" class="nonParticipant">
+                  <button onclick="joinSession()">Join Selected Session</button>
+              </div>
+              
+              <div id="cobrowsing-holder" style="border: 1px solid blue"></div>
+          </div>
+        </div>
 </div>
 
 <div class="section row container">
