@@ -119,9 +119,8 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy
     setLogoutOnUnload();
     setup();
+
     login(TEACHER_CALL_USER);
-    $('#loginBtn').on('click', login);
-    $('#logout').on('click', logout);
     $('#callBtn').on('click', makeCall);
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
@@ -131,7 +130,6 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#hangUpBtn').on('click', hangUpCall);
 
     $('#loginForm').on('submit', login);
-    $('#callOutForm').on('submit', makeCall);
   });
 }]);
 
@@ -152,10 +150,10 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy
     setLogoutOnUnload();
     setup();
+
     login(STUDENT_CALL_USER);
     $('#loginBtn').on('click', login);
     $('#logout').on('click', logout);
-    $('#callBtn').on('click', makeCall);
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
     $('#hangUpCallOutBtn').on('click', hangUpCall);
@@ -164,7 +162,6 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#hangUpBtn').on('click', hangUpCall);
 
     $('#loginForm').on('submit', login);
-    $('#callOutForm').on('submit', makeCall);
   });
 }]);
 

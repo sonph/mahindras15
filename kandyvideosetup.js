@@ -137,7 +137,7 @@ var setup = function(callback) {
                         callId = null;
                         if (uiState != 'LOGGED_OUT') {
                             changeUIState("READY_FOR_CALLING");
-                            $('#statusMsg').html("Call ended.");
+                            $('#statusMsg').html("Call ended");
                         }
                     },
                     callendfailed: function () {
@@ -158,7 +158,7 @@ var setup = function(callback) {
     }
 };
 
-var login = function(id, callback) {
+var login = function(id) {
     try {
       KandyAPI.Phone.login(APIKEY, id, PASSWORD);
       if (typeof(callback) == "function") {
@@ -170,7 +170,7 @@ var login = function(id, callback) {
 };
 
 var makeCall = function() {
-    KandyAPI.Phone.makeCall($('#callOutId').val(), true);
+    KandyAPI.Phone.makeCall(TEACHER_CALL_USER, true);
 };
 var answerVideoCall = function() {
     changeUIState("ANSWERING_CALL");
@@ -218,51 +218,65 @@ var changeUIState = function(state) {
     uiState = state;
     switch (uiState) {
         case 'LOGGED_OUT':
+            $('#mainControl').hide();
             $("#login").show();
             $("#logout").css('visibility','hidden');
             $("#someonesCalling").hide();
             $('#readyForCalling').hide();
             $('#onCall').hide();
-            $("#statusMsg").html('');
+            $("#statusMsg").html('Initializing');
             $('#videoPane').hide();
             break;
         case 'READY_FOR_CALLING':
+            $('#preloader-div').fadeOut();
+            $('#statusMsg').fadeOut();
+            $('#preloader-div').hide();
+            $('#statusMsg').hide();
+            $('#statusMsg').html('');
+            $('#mainControl').fadeIn();
             $("#login").hide();  //hide();
             $("#logout").css('visibility','visible');
             $('#someonesCalling').hide();
             $('#readyForCalling').show();
             $('#callingOut').hide();
             $('#onCall').hide();
-            $('#statusMsg').html("");
+            $('#statusMsg').html('Ready');
+            $('#statusMsg').fadeIn();
             $('#videoPane').empty();
             $('#videoPane').show();
             break;
         case 'CALLING':
+            $('#status').fadeOut();
+            $('#statusMsg').html('Calling');
+            $('#mainControl').fadeOut();
+            $('#mainControl').hide();
+            $('#preloader-div').fadeIn();
+            $('#status').fadeIn();
             $('#someonesCalling').hide();
             $('#readyForCalling').hide();
             $('#callingOut').show();
             $('#onCall').hide();
-            $('#statusMsg').html("Calling " + $('#callOutId').val());
+            $('#holdBtn').show();
             break;
         case 'ON_CALL':
             $('#someonesCalling').hide();
             $('#readyForCalling').hide();
             $('#callingOut').hide();
             $('#onCall').show();
-                $('#holdBtn').css('display', 'inline');
-                $('#unholdBtn').hide();
-            $('#statusMsg').html("Connected to " + $('#otherPartyName').val());
+            $('#unholdBtn').hide();
+            $('#holdBtn').show();
+            $('#statusMsg').html("Connected");
             break;
         case 'BEING_CALLED':
             $('#someonesCalling').show();
             $('#readyForCalling').hide();
             $('#callingOut').hide();
             $('#onCall').hide();
-            $('#statusMsg').html("Incoming call from " + $('#otherPartyName').val() + "...");
+            $('#statusMsg').html("Incoming call");
             break;
         case 'ANSWERING_CALL':
             $('#someonesCalling').hide();
-            $('#statusMsg').html("Establishing connection with " + $('#otherPartyName').val() + "...");
+            $('#statusMsg').html("Connecting");
             break;
         case 'CALL_HELD':
             $('#someonesCalling').hide();
@@ -270,8 +284,8 @@ var changeUIState = function(state) {
             $('#callingOut').hide();
             $('#onCall').show();
                 $('#holdBtn').hide();
-                $('#unholdBtn').css('display', 'inline');
-            $('#statusMsg').html("On hold with " + $('#otherPartyName').val() + "...");
+                $('#unholdBtn').show();
+            $('#statusMsg').html("On hold");
             break;
     }
 }

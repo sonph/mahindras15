@@ -13,14 +13,14 @@
 
 /** {
   border: dotted gray;
-}*/
-
+}
+*/
 #left {
 /*  position: absolute;
   top: 64;
   left: 0;
 */
-  width: 700px;
+  width: 400px;
   height: 700px;
 }
 
@@ -95,22 +95,18 @@
   border:1px solid #5A0F7D;
   background-color:white;
   color:black;
-  width:340px;
-  height:335px;
-  padding:5px 10px 10px 10px;
+  width:300px;
+  height:300px;
 }
 
 #mainControl {
-  width:339px;
-  height:210px;
+  width:300px;
+  height:300px;
 }
 
 #videoPane {
-  border:1px solid black;
-  width:334px;
+  width:300px;
   height:250px;
-  background-repeat:no-repeat;
-  background-size: 334px 250px;
 }
 
 #onCall {
@@ -118,10 +114,24 @@
 }
 
 #status {
-  position: absolute;
-   bottom: 0;
-   left: 0;
+  text-align: center;
+  width: 300px;
+  height: 250px;
 }
-#callOutId {
-  width: 160px;
+
+#buttons {
+  height: 50px;
+  width: 300px;
+  position: absolute;
+  bottom: 0;
+}
+
+#preloader-spacer, #status-spacer {
+  display: block;
+  height: 100px;
+}
+
+#status {
+  position: absolute;
+  padding-top: 10px;
 }
