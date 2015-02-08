@@ -153,7 +153,18 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
   }
 
   var sendMsg = function(text) {
-    var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, text !== undefined ? text : $('#chat_box').val(),
+    var sendText = '';
+    if ($scope.USER == 'STUDENT') {
+      if (text == '您好') {
+        sendText = 'hello';
+      }
+    } else {
+      if (text == 'hello') {
+        sendText = '您好';
+      }
+    }
+
+    var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, text !== undefined ? (sendText != '' ? sendText : text) : $('#chat_box').val(),
       function(result) {
         // toast(JSON.stringify(result), 4000);
         if (text == '#FEEDBACK-GOOD') {
@@ -230,7 +241,17 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
                 );
                 toast('Teacher has provided bad feedback.', 4000);
               } else {
-                $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
+                var mess = msg.message.text;
+                if ($scope.USER == 'STUDENT') {
+                  if (mess == 'hello') {
+                    mess = '您好';
+                  }
+                } else {
+                  if (mess == '您好') {
+                    mess = 'hello';
+                  }
+                }
+                $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + mess + '</span></div>');
               }
             } else if (msg.contentType == 'file') {
 
