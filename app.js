@@ -105,7 +105,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 
 app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
   $rootScope.root = {
-    title: 'Student'
+    title: 'Teacher'
   };
 
   var sendMsg = function() {
@@ -227,7 +227,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
 	setInterval(getMsg, 3000);
 
     // setup kandy cobrowsing
-    loginUser();
+    // loginUser();
     // var session = JSON.parse(SESSION);
     // getOpenSessions();
     // leaveSession(session);
