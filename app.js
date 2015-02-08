@@ -148,7 +148,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy
     setLogoutOnUnload();
     setup();
-
+    loginUser();
     login(STUDENT_CALL_USER);
     $('#callBtn').on('click', makeCall);
     $('#answerVideoCallBtn').on('click', answerVideoCall);
