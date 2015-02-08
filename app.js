@@ -133,6 +133,23 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     $('#feedback-buttons').fadeIn();
   }
 
+  var setContactOnline = function(online) {
+    $scope.contactOnline = online;
+  };
+
+  var sendStudentSMS = function(text) {
+    KandyAPI.Phone.sendSMS(
+      STUDENT_PHONE_NUMBER,
+      'Teacher',
+      text,
+      function() {
+      },
+      function() {
+        toast('Failed to send SMS', 4000);
+      }
+    );
+  }
+
   var sendMsg = function(text) {
     var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, text !== undefined ? text : $('#chat_box').val(),
       function(result) {
@@ -141,14 +158,23 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
           $('#msg_box').append(
             '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#4caf50">good</span> feedback.</span></div>'
           );
+          if ($scope.contactOnline == false || $scope.contactOnline == undefined) {
+            sendStudentSMS('Good Work.');
+          }
         } else if (text == '#FEEDBACK-AVG') {
           $('#msg_box').append(
             '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#ffeb3b">average</span> feedback.</span></div>'
           );
+          if ($scope.contactOnline == false || $scope.contactOnline == undefined) {
+            sendStudentSMS('Average Work.');
+          }
         } else if (text == '#FEEDBACK-BAD') {
           $('#msg_box').append(
             '<div class="center"><span style="color: #A0A0A0">You have provided <span style="color:#f44336">bad</span> feedback.</span></div>'
           );
+          if ($scope.contactOnline == false || $scope.contactOnline == undefined) {
+            sendStudentSMS('Bad Work.');
+          }
         } else {
           $('#msg_box').append('<div><span id="msg-' + result.UUID + '" style="color:#ff6868">You: </span>' +
                   '<span>' + $('#chat_box').val() + '</span>' +

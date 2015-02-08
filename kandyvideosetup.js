@@ -154,12 +154,14 @@ var setup = function(callback) {
                                     '<div class="center"><span style="color: #A0A0A0">Contact is now online.</span></div>'
                                 );
                                 toast('Contact is now online', 4000);
+                                setContactOnline(true);
                             break;
                             case 11:    // offline
                                 $('#msg_box').append(
                                     '<div class="center"><span style="color: #A0A0A0">Contact has gone offline.</span></div>'
                                 );
                                 toast('Contact has gone offline', 4000);
+                                setContactOnline(false);
                             break;
                         }
                     }
