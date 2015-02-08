@@ -143,6 +143,7 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   }
   
   $(document).ready(function() {
+    $('.tooltipped').tooltip({delay: 50});
     // setup editor
     // var editor_left = ace.edit("left");
     // editor_left.setTheme("ace/theme/xcode");
@@ -213,6 +214,8 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   }
   
   $(document).ready(function() {
+    $('.tooltipped').tooltip({delay: 50});
+
     // setup editor
     // var editor_left = ace.edit("left");
     // editor_left.setTheme("ace/theme/xcode");

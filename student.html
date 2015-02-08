@@ -112,7 +112,7 @@
           <div id="buttons" class="center">
             <!-- user is logged in, but not on call -->
             <div id="readyForCalling" style="display:none">
-                <a id="callBtn" class="waves-effect waves-light btn">Call</a>
+                <a id="callBtn" class="waves-effect waves-light btn">Call<i class="mdi-communication-phone left"></i></a>
             </div>
 
             <!-- receiving a call, but haven't answered yet -->
@@ -142,8 +142,10 @@
         <div>
           <div id="chat">
             <ul id="msg_box"></ul>
-            <div class="divider"></div>
+            <div id="message-box" class="row">
+              <i id="add-file" class="small mdi-content-add tooltipped" data-position="top" data-delay="50" data-tooltip="I am tooltip"></i>
             <input type="text" id="chat_box" placeholder="Message"></input>
+            </div>
           </div>
         </div>
 
