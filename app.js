@@ -110,11 +110,11 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   
   $(document).ready(function() {
     // setup editor
-    var editor_left = ace.edit("left");
-    editor_left.setTheme("ace/theme/xcode");
-    editor_left.getSession().setMode("ace/mode/javascript");
-    editor_left.setFontSize(13);
-    editor_left.$blockScrolling = Infinity;
+    // var editor_left = ace.edit("left");
+    // editor_left.setTheme("ace/theme/xcode");
+    // editor_left.getSession().setMode("ace/mode/javascript");
+    // editor_left.setFontSize(13);
+    // editor_left.$blockScrolling = Infinity;
 
     // setup kandy
     setLogoutOnUnload();
@@ -139,11 +139,11 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   
   $(document).ready(function() {
     // setup editor
-    var editor_left = ace.edit("left");
-    editor_left.setTheme("ace/theme/xcode");
-    editor_left.getSession().setMode("ace/mode/javascript");
-    editor_left.setFontSize(13);
-    editor_left.$blockScrolling = Infinity;
+    // var editor_left = ace.edit("left");
+    // editor_left.setTheme("ace/theme/xcode");
+    // editor_left.getSession().setMode("ace/mode/javascript");
+    // editor_left.setFontSize(13);
+    // editor_left.$blockScrolling = Infinity;
 
     // setup kandy
     setLogoutOnUnload();

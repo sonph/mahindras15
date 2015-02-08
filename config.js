@@ -3,3 +3,6 @@ var PASSWORD = '123456a@';
 
 var TEACHER_CALL_USER = 'user1';
 var STUDENT_CALL_USER = 'user2';
+
+var TEACHER_COBROWSE_USER = 'user1';
+var STUDENT_COBROWSE_USER = 'user2';

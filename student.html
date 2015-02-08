@@ -5,7 +5,7 @@
   <table>
     <tr>
       <td>
-        <div id="left"></div>
+
       </td>
       <td>
         <!---------------------------- VIDEO CALL -------------------------->
@@ -112,4 +112,63 @@
       </td>
     </tr>
   </table>
+</div>
+
+<div class="section row">
+  <form id="loginForm">
+    Project API Key: <input id="domainApiId" type="text" value=""/>
+    <br/>
+    UserName: <input id="loginUserName" type="text" value=""/>
+    <br/>
+    Password: <input id="loginPassword" type="password" value=""/>
+    <br/>
+    <br/>
+    <input id="userloginBtn" type="button" value="User Log in" onclick="loginUser();return false;"/>
+    <input id="annonloginBtn" type="button" value="AnonymousLog in" onclick="loginAnonymous();return false;"/>
+</form>
+
+<div id="loggedIn" style="display:none">
+
+    <div id="userDetails">
+        <span style="font-weight:bold">User ID: </span><span id="user_id"></span><br/>
+    </div>
+    <br/>
+    <hr style="clear:both"/>
+    <div style="font-weight:bold">Session Loading & Selection:</div>
+    <br/>
+    <button onclick="getOpenSessions()">Get Open Sessions</button>
+    <br/><br/>
+    <div id="noSessionsLoaded">
+        No sessions loaded.<br/>
+        <br/>
+    </div>
+    <div id="sessionsLoaded" style="display:none;margin-left:20px">
+        <div id="sessionSelect">
+            Select Session: <select id="sessions" style="" onchange="loadSessionDetails()"></select>
+        </div>
+        <div id="sessionDetails" style="margin-left:110px">
+            Type: <span id="session_type"></span><br/>
+            Status: <span id="session_status"></span><br/>
+            Admin: <span id="session_admin"></span><br/>
+            <br/>
+        </div>
+        <div class="participant">
+            <button onclick="leaveSession()">Leave Selected Session</button>
+            <div id="startCoBrowse">
+                <button onclick="startCoBrowseAgent()">Start CoBrowsing Viewer</button>
+            </div>
+            <div id="stopCoBrowse" style="display: none;">
+                <button onclick="stopCoBrowseAgent()">Stop CoBrowsing Viewer</button>
+            </div>
+        </div>
+    </div>
+    <hr style="clear:both"/>
+
+    <div style="clear:both" id="sessionJoining" class="nonParticipant">
+        <button onclick="joinSession()">Join Selected Session</button>
+    </div>
+    
+    <div id="cobrowsing-holder" style="border: 1px solid blue"></div>
+</div>
+
 </div>
