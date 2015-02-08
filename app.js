@@ -129,13 +129,18 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
   var sendMsg = function() {
     var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, $('#chat_box').val(),
       function(result) {
-          $('#msg_box').append('<div><span style="color:#ff6868">You: </span>' +
+        // toast(JSON.stringify(result), 4000);
+          $('#msg_box').append('<div><span id="msg-' + result.UUID + '" style="color:#ff6868">You: </span>' +
                   '<span>' + $('#chat_box').val() + '</span>' +
                   '</div>');
           $('#chat_box').val('');
       },
       function(message, status) {
         toast('Error: ' + message + ', status: ' + status, 4000);
+        $('#msg_box').append('<div><span id="msg-' + result.UUID + '" style="color:#ff6868">You: </span>' +
+                  '<span>' + $('#chat_box').val() + '</span><i class="mdi-action-report-problem right"></i>' +
+                  '</div>');
+          $('#chat_box').val('');
       }
     );
   };
@@ -144,17 +149,31 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     KandyAPI.Phone.getIm(function(data) {
       for (var iter = 0; iter < data.messages.length; iter++) {
         var msg = data.messages[iter];
+
+        // take a look at the message
+        // toast(JSON.stringify(msg), 4000);
+
         if (msg.messageType == 'chat') {
           var username = msg.sender.user_id;
+
+            // TODO : if the logged in user is a teacher and the user he/she is chatting with
+            // is not the sender, open a toast saying another student has sent him/her a message
+
           if (username == $scope.YOU) {
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
             $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
+            // toast('User id: ' + msg.sender.user_id, 4000);           
           } else {
             console.debug(msg.sender.user_id);
           }
+        } else if (msg.messageType == 'chatRemoteAck') {
+          // add seen checkmark
+          $('#msg-' + msg.UUID).after('<i class="mdi-action-done right"></i>')
         } else {
           console.debug(msg.messageType);
+          // toast('Msg type: ' + msg.messageType, 4000);
+
         }
       } // END loop
     }, function() { alert("error loading message"); });
