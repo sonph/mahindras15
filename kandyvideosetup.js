@@ -170,7 +170,7 @@ var login = function(id) {
 };
 
 var makeCall = function() {
-    KandyAPI.Phone.makeCall(TEACHER_CALL_USER, true);
+    KandyAPI.Phone.makeCall(TEACHER_CALL_USER + '@mahindra15.com', true);
 };
 var answerVideoCall = function() {
     changeUIState("ANSWERING_CALL");
@@ -244,8 +244,10 @@ var changeUIState = function(state) {
             $('#statusMsg').fadeIn();
             $('#videoPane').empty();
             $('#videoPane').show();
+            $('#callBtn').removeClass('disabled');
             break;
         case 'CALLING':
+            $('#callBtn').addClass('disabled');
             $('#status').fadeOut();
             $('#statusMsg').html('Calling');
             $('#mainControl').fadeOut();
@@ -259,10 +261,14 @@ var changeUIState = function(state) {
             $('#holdBtn').show();
             break;
         case 'ON_CALL':
+            $('#preloader-div').fadeOut();
+            $('#preloader-div').hide();
             $('#someonesCalling').hide();
             $('#readyForCalling').hide();
             $('#callingOut').hide();
             $('#onCall').show();
+            $('#videoPane').fadeIn();
+            $('#videoPane').show();
             $('#unholdBtn').hide();
             $('#holdBtn').show();
             $('#statusMsg').html("Connected");

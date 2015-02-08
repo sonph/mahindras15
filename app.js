@@ -128,8 +128,6 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
-
-    $('#loginForm').on('submit', login);
   });
 }]);
 
@@ -152,16 +150,13 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     setup();
 
     login(STUDENT_CALL_USER);
-    $('#loginBtn').on('click', login);
-    $('#logout').on('click', logout);
+    $('#callBtn').on('click', makeCall);
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
     $('#hangUpCallOutBtn').on('click', hangUpCall);
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
-
-    $('#loginForm').on('submit', login);
   });
 }]);
 
