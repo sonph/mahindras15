@@ -169,8 +169,8 @@ var login = function(id) {
     }
 };
 
-var makeCall = function() {
-    KandyAPI.Phone.makeCall(TEACHER_CALL_USER + '@mahindra15.com', true);
+var makeCall = function(user) {
+    KandyAPI.Phone.makeCall(user + '@mahindra15.com', true);
 };
 var answerVideoCall = function() {
     changeUIState("ANSWERING_CALL");

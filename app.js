@@ -8,12 +8,18 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     controller: 'HomeCtrl'
   })
   .when('/student', {
-    templateUrl: 'student.html',
-    controller: 'StudentCtrl'
+    templateUrl: 'main.html',
+    controller: 'StudentCtrl',
+    resolve: {
+      USER: function() { return 'STUDENT'; }
+    }
   })
   .when('/teacher', {
-    templateUrl: 'teacher.html',
-    controller: 'TeacherCtrl'
+    templateUrl: 'main.html',
+    controller: 'StudentCtrl',
+    resolve: {
+      USER: function() { return 'TEACHER'; }
+    }
   })
   // .when('/about', {
   //   templateUrl: 'about.html',
@@ -103,87 +109,25 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
 //   };
 // }]);
 
-app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-  $rootScope.root = {
-    title: 'Teacher'
-  };
-
-  var sendMsg = function() {
-    var uuid = KandyAPI.Phone.sendIm(STUDENT_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
-      function(result) {
-          $('#msg_box').append('<div><span>You: </span>' +
-                  '<span>' + $('#chat_box').val() + '</span>' +
-                  '</div>');
-          $('#chat_box').val('');
-      },
-      function(message, status) {
-          alert("Failed to send message.");
-      }
-    );
+app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, $rootScope, USER) {
+  if (USER == 'STUDENT') {
+    $rootScope.root = {
+      title: 'Student'
+    };
+    $scope.YOU = TEACHER_CALL_USER;
+    $scope.ME = STUDENT_CALL_USER;
+    $scope.chatName = 'Teacher';
+  } else {
+    $rootScope.root = {
+      title: 'Teacher'
+    };
+    $scope.YOU = STUDENT_CALL_USER;
+    $scope.ME = TEACHER_CALL_USER;
+    $scope.chatName = 'Student'
   }
 
-  var getMsg = function() {
-    KandyAPI.Phone.getIm(function(data) {
-      for (var iter = 0; iter < data.messages.length; iter++) {
-        var msg = data.messages[iter];
-        if (msg.messageType == 'chat') {
-          var username = msg.sender.user_id;
-          if (username == STUDENT_CALL_USER) {
-            // TODO : delete previous messages to limit the number of displayed messages?
-            // or add scroll bar
-            $('#msg_box').append('<div><span>Student: </span><span>' + msg.message.text + '</span></div>');
-          } else {
-            console.debug(msg.sender.user_id);
-          }
-        } else {
-          console.debug(msg.messageType);
-        }
-      } // END loop
-    }, function() { alert("error loading message"); });
-  }
-  
-  $(document).ready(function() {
-    $('.tooltipped').tooltip({delay: 50});
-    // setup editor
-    // var editor_left = ace.edit("left");
-    // editor_left.setTheme("ace/theme/xcode");
-    // editor_left.getSession().setMode("ace/mode/javascript");
-    // editor_left.setFontSize(13);
-    // editor_left.$blockScrolling = Infinity;
-
-    // setup kandy
-    setLogoutOnUnload();
-    setup();
-    setInterval(getMsg, 3000);
-
-    login(TEACHER_CALL_USER);
-    $('#callBtn').on('click', makeCall);
-    $('#answerVideoCallBtn').on('click', answerVideoCall);
-    $('#rejectCallBtn').on('click', rejectCall);
-    $('#hangUpCallOutBtn').on('click', hangUpCall);
-    $('#holdBtn').on('click', holdCall);
-    $('#unholdBtn').on('click', unholdCall);
-    $('#hangUpBtn').on('click', hangUpCall);
-
-    $('#chat_box').on('keypress', function() {
-      if (window.event.keyCode == 13) {
-        sendMsg();
-      }
-    });
-  });
-}]);
-
-
-app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-  $rootScope.root = {
-    title: 'Student'
-  };
-
-  $scope.YOU = TEACHER_CALL_USER;
-  $scope.ME = STUDENT_CALL_USER;
-
   var sendMsg = function() {
-    var uuid = KandyAPI.Phone.sendIm(TEACHER_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
+    var uuid = KandyAPI.Phone.sendIm($scope.YOU + '@' + DOMAIN_NAME, $('#chat_box').val(),
       function(result) {
           $('#msg_box').append('<div><span style="color:#ff6868">You: </span>' +
                   '<span>' + $('#chat_box').val() + '</span>' +
@@ -205,7 +149,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
           if (username == $scope.YOU) {
             // TODO : delete previous messages to limit the number of displayed messages?
             // or add scroll bar
-            $('#msg_box').append('<div><span style="color:#68a9ff">Teacher: </span><span>' + msg.message.text + '</span></div>');
+            $('#msg_box').append('<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><span>' + msg.message.text + '</span></div>');
           } else {
             console.debug(msg.sender.user_id);
           }
@@ -242,7 +186,9 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // startCoBrowseAgent(session);
 
 
-    $('#callBtn').on('click', makeCall);
+    $('#callBtn').on('click', function () {
+      makeCall($scope.YOU);
+    });
     $('#answerVideoCallBtn').on('click', answerVideoCall);
     $('#rejectCallBtn').on('click', rejectCall);
     $('#hangUpCallOutBtn').on('click', hangUpCall);
