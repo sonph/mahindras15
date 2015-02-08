@@ -124,6 +124,7 @@ input#chat_box {
   overflow: scroll;
   padding: 5px;
   position: fixed;
+  border-top: 1px solid gray;
 }
 
 #right {
