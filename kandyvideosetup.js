@@ -145,7 +145,23 @@ var setup = function(callback) {
                     },
                     // presense notifications (are your contacts available, away, offline?) not handled in this demo
                     presencenotification: function (username, state, description, activity) {
-                        console.debug('presencenotification');
+                        // console.debug('presencenotification');
+                        // TODO: if the current logged in user is a teacher and a contact that he/she is not contacting
+                        // has gone offline, show a toast
+                        switch(state) {
+                            case 0:     // available
+                                $('#msg_box').append(
+                                    '<div class="center"><span style="color: #A0A0A0">Contact is now online.</span></div>'
+                                );
+                                toast('Contact is now online', 4000);
+                            break;
+                            case 11:    // offline
+                                $('#msg_box').append(
+                                    '<div class="center"><span style="color: #A0A0A0">Contact has gone offline.</span></div>'
+                                );
+                                toast('Contact has gone offline', 4000);
+                            break;
+                        }
                     }
                 }
             });
@@ -304,6 +320,7 @@ var setLogoutOnUnload = function() {
             if (isOnCall()) {
                 KandyAPI.Phone.endCall(callId);
             }
+            KandyAPI.Phone.updatePresence(11);
             KandyAPI.Phone.logout(function () {
             });
         } catch (err) {

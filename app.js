@@ -117,6 +117,9 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     $scope.YOU = TEACHER_CALL_USER;
     $scope.ME = STUDENT_CALL_USER;
     $scope.chatName = 'Teacher';
+    $scope.presenceWatch = [
+      {full_user_id: TEACHER_CALL_USER + '@' + DOMAIN_NAME}
+    ];
   } else {
     $rootScope.root = {
       title: 'Teacher'
@@ -205,7 +208,10 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     setLogoutOnUnload();
     setup();
     login($scope.ME);
-	setInterval(getMsg, 3000);
+    if ($scope.presenceWatch !== undefined) {
+      KandyAPI.Phone.watchPresence($scope.presenceWatch);
+    }
+    setInterval(getMsg, 3000);
 
     // setup kandy cobrowsing
     // loginUser();
