@@ -107,6 +107,40 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   $rootScope.root = {
     title: 'Student'
   };
+
+  var sendMsg = function() {
+    var uuid = KandyAPI.Phone.sendIm(STUDENT_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
+      function(result) {
+          $('#msg_box').append('<div><span>You: </span>' +
+                  '<span>' + $('#chat_box').val() + '</span>' +
+                  '</div>');
+          $('#chat_box').val('');
+      },
+      function(message, status) {
+          alert("Failed to send message.");
+      }
+    );
+  }
+
+  var getMsg = function() {
+    KandyAPI.Phone.getIm(function(data) {
+      for (var iter = 0; iter < data.messages.length; iter++) {
+        var msg = data.messages[iter];
+        if (msg.messageType == 'chat') {
+          var username = msg.sender.user_id;
+          if (username == STUDENT_CALL_USER) {
+            // TODO : delete previous messages to limit the number of displayed messages?
+            // or add scroll bar
+            $('#msg_box').append('<div><span>Student: </span><span>' + msg.message.text + '</span></div>');
+          } else {
+            console.debug(msg.sender.user_id);
+          }
+        } else {
+          console.debug(msg.messageType);
+        }
+      } // END loop
+    }, function() { alert("error loading message"); });
+  }
   
   $(document).ready(function() {
     // setup editor
@@ -119,6 +153,7 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy
     setLogoutOnUnload();
     setup();
+    setInterval(getMsg, 3000);
 
     login(TEACHER_CALL_USER);
     $('#callBtn').on('click', makeCall);
@@ -128,6 +163,12 @@ app.controller('TeacherCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
+
+    $('#chat_box').on('keypress', function() {
+      if (window.event.keyCode == 13) {
+        sendMsg();
+      }
+    });
   });
 }]);
 
@@ -136,6 +177,40 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
   $rootScope.root = {
     title: 'Student'
   };
+
+  var sendMsg = function() {
+    var uuid = KandyAPI.Phone.sendIm(TEACHER_CALL_USER + '@' + DOMAIN_NAME, $('#chat_box').val(),
+      function(result) {
+          $('#msg_box').append('<div><span>You:</span>' +
+                  '<span>' + $('#chat_box').val() + '</span>' +
+                  '</div>');
+          $('#chat_box').val('');
+      },
+      function(message, status) {
+          alert("Error " + message + "; status=" + status);
+      }
+    );
+  };
+
+  var getMsg = function() {
+    KandyAPI.Phone.getIm(function(data) {
+      for (var iter = 0; iter < data.messages.length; iter++) {
+        var msg = data.messages[iter];
+        if (msg.messageType == 'chat') {
+          var username = msg.sender.user_id;
+          if (username == TEACHER_CALL_USER) {
+            // TODO : delete previous messages to limit the number of displayed messages?
+            // or add scroll bar
+            $('#msg_box').append('<div><span>Teacher: </span><span>' + msg.message.text + '</span></div>');
+          } else {
+            console.debug(msg.sender.user_id);
+          }
+        } else {
+          console.debug(msg.messageType);
+        }
+      } // END loop
+    }, function() { alert("error loading message"); });
+  }
   
   $(document).ready(function() {
     // setup editor
@@ -148,6 +223,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     // setup kandy
     setLogoutOnUnload();
     setup();
+    setInterval(getMsg, 3000);
 
     login(STUDENT_CALL_USER);
     $('#callBtn').on('click', makeCall);
@@ -157,6 +233,12 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', function($scope, $rootSco
     $('#holdBtn').on('click', holdCall);
     $('#unholdBtn').on('click', unholdCall);
     $('#hangUpBtn').on('click', hangUpCall);
+
+    $('#chat_box').on('keypress', function() {
+      if (window.event.keyCode == 13) {
+        sendMsg();
+      }
+    });
   });
 }]);
 
