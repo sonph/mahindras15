@@ -267,6 +267,7 @@ var changeUIState = function(state) {
             $('#readyForCalling').hide();
             $('#callingOut').hide();
             $('#onCall').show();
+            $('#mainControl').show();
             $('#videoPane').fadeIn();
             $('#videoPane').show();
             $('#unholdBtn').hide();
