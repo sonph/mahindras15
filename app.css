@@ -67,6 +67,11 @@
   height:300px;
 }
 
+#call_control * {
+  
+  z-index: inherit 100 !important;
+}
+
 #mainControl {
   width:300px;
   height:300px;
@@ -181,4 +186,26 @@ input#chat_box {
 .message-img {
   max-width: 250px;
   max-height: 150px;
+}
+
+#editor {
+  /*height: 100%;*/
+  width: 100%;
+  position: absolute;
+  /*z-index: -5;*/
+  top:65px;
+  left:0;
+  right:300px;
+  bottom: 0;
+}
+
+.ace_active-line {
+  margin-right: 300px !important;
+}
+
+.ace_marker-layer{
+  z-index:inherit !important;
+}
+.ace_active-line, .ace-line, .ace_selection {
+  z-index:0 !important;
 }

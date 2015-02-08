@@ -264,11 +264,11 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
     $('.materialboxed').materialbox();
 
     // setup editor
-    // var editor_left = ace.edit("left");
-    // editor_left.setTheme("ace/theme/xcode");
-    // editor_left.getSession().setMode("ace/mode/javascript");
-    // editor_left.setFontSize(13);
-    // editor_left.$blockScrolling = Infinity;
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/xcode");
+    editor.getSession().setMode("ace/mode/javascript");
+    editor.setFontSize(13);
+    editor.$blockScrolling = Infinity;
 
     // setup kandy video call
     setLogoutOnUnload();
