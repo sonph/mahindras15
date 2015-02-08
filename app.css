@@ -190,13 +190,15 @@ input#chat_box {
 
 #editor {
   /*height: 100%;*/
-  width: 100%;
+  /*width: 100%;*/
   position: absolute;
   /*z-index: -5;*/
   top:65px;
   left:0;
   right:300px;
   bottom: 0;
+  height: 1080px;
+  width: 1620px;
 }
 
 .ace_active-line {
