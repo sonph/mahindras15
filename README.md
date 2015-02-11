@@ -26,3 +26,4 @@ Team members: @sonph, @quangta93, @vasujindal on GitHub.
 
 ![Landing](https://raw.githubusercontent.com/sonph/mahindras15/master/screenshots/landing.png)
 ![Call](https://raw.githubusercontent.com/sonph/mahindras15/master/screenshots/call.png)
+![Calling](https://raw.githubusercontent.com/sonph/mahindras15/master/screenshots/calling.png)
