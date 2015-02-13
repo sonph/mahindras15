@@ -4,7 +4,7 @@ Code together, stay apart. CodeLab is a realtime collaborative coding webapp wit
 
 CodeLab was developed at the 48 hours Tech Mahindra Hackathon, Feb. 6 to Feb. 8, 2015, at the University of Texas at Dallas.
 
-Team members: @sonph, @quangta93, @vasujindal on GitHub.
+Team members: @sonph, @quangta93, @v00j on GitHub.
 
 # Demo
 [Demo Video on Youtube](https://www.youtube.com/watch?v=E9mek0s35lA)
