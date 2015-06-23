@@ -62,7 +62,7 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
   if ($('#lastUpdated').length) { // Checks if widget div exists (Index only)
     $.ajax({
       url: "https://api.github.com/repos/sonph/hackutds15/commits/gh-pages",
-      dataType: "json", 
+      dataType: "json",
       success: function (data) {
         var sha = data.sha;
         var date = jQuery.timeago(data.commit.author.date);
@@ -75,8 +75,8 @@ app.controller('HomeCtrl', ['$scope', '$rootScope', '$location', function($scope
         // $('.github-commit').find('.sha').html(sha.substring(0, 7));
 
         // console.log(returndata, returndata.commit.author.date, returndata.sha);
-      }  
-    });      
+      }
+    });
   }
 
   var window_width = $(window).width;
@@ -155,12 +155,13 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
   var sendMsg = function(text) {
     var sendText = '';
     if ($scope.USER == 'STUDENT') {
-      if (text == '您好') {
+      if (text == 'hello') {
         sendText = 'hello';
       }
     } else {
       if (text == 'hello') {
-        sendText = '您好';
+        // sendText = '您好';
+        sendText = 'hello';
       }
     }
 
@@ -244,10 +245,10 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
                 var mess = msg.message.text;
                 if ($scope.USER == 'STUDENT') {
                   if (mess == 'hello') {
-                    mess = '您好';
+                    mess = 'hello';
                   }
                 } else {
-                  if (mess == '您好') {
+                  if (mess == 'hello') {
                     mess = 'hello';
                   }
                 }
@@ -264,7 +265,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
                 '<div><span style="color:#68a9ff">' + $scope.chatName + ': </span><img class="materialboxed message-img" src="' + thumbnailURL + '"></div></div>'
               );
             }
-            
+
           } else {
             console.debug(msg.sender.user_id);
           }
@@ -279,7 +280,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
       } // END loop
     }, function() { alert("error loading message"); });
   }
-  
+
   $(document).ready(function() {
     $('.tooltipped').tooltip({delay: 50});
     $('.materialboxed').materialbox();
@@ -330,11 +331,11 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
 
     $('#input-file').on('change', function() {
       toast('You chose a file', 4000);
-      var file = document.getElementById("input-file").files[0]; 
+      var file = document.getElementById("input-file").files[0];
       $scope.fileUUID = KandyAPI.Phone.sendImWithFile($scope.YOU + '@' + DOMAIN_NAME, file,
         function(content_uuid) {  // success function
             // YOUR CODE GOES HERE
-          toast(content_uuid, 4000);
+          // toast(content_uuid, 4000);
           var fileURL = KandyAPI.Phone.buildFileUrl(content_uuid);
           var thumbnailURL = KandyAPI.Phone.buildFileThumbnailUrl(content_uuid);
 
