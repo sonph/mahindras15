@@ -147,7 +147,7 @@ app.controller('StudentCtrl', ['$scope', '$rootScope', 'USER', function($scope, 
       function() {
       },
       function() {
-        toast('Failed to send SMS', 4000);
+        // toast('Failed to send SMS', 4000);
       }
     );
   }
